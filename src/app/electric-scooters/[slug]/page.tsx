@@ -10,6 +10,7 @@ import { SectionHeading } from "@/components/common/section-heading";
 import { Breadcrumbs, type Crumb } from "@/components/common/breadcrumbs";
 import { JsonLd } from "@/components/seo/json-ld";
 import { FaqSection } from "@/components/sections/faq-section";
+import { EvSavingsCalculator } from "@/components/sections/ev-savings-calculator";
 import { ProductProvider } from "@/components/product/product-provider";
 import { ProductHero } from "@/components/product/product-hero";
 import { ProductGallery } from "@/components/product/product-gallery";
@@ -19,6 +20,9 @@ import { ColorSwatches } from "@/components/product/color-swatches";
 import { SpecTable } from "@/components/product/spec-table";
 import { ProductBaas } from "@/components/product/product-baas";
 import { RelatedProducts } from "@/components/product/related-products";
+import { Showroom } from "@/components/product/showroom/showroom";
+import { ShowroomVariants } from "@/components/product/showroom/showroom-variants";
+import { ShowroomConversion } from "@/components/product/showroom/showroom-conversion";
 import {
   getProductBySlug,
   getProductFeatures,
@@ -27,6 +31,8 @@ import {
   getRelatedProducts,
   resolveVariant,
 } from "@/lib/products";
+import { getBranches } from "@/lib/branches";
+import { getShowroom } from "@/data/showroom";
 import {
   breadcrumbJsonLd,
   faqSchema,
@@ -44,6 +50,20 @@ import { DEALERSHIP_NAME, brandedModel } from "@/lib/brand";
  * specifications, features, colours, gallery and FAQs all arrive from product
  * data. Adding a sixth model means adding a data file; this file does not
  * change.
+ *
+ * TWO PRESENTATIONS, ONE PAGE
+ *
+ * A model with a showroom entry (`src/data/showroom/`) gets the guided
+ * walk-through: sticky section navigation, image-led feature storytelling, an
+ * interactive colour picker and a branch-aware conversion block. A model
+ * without one gets the standard layout it always had. The switch is the
+ * presence of a data file, so bringing LXS 3.0, LXS 2.0, ZYRO or SX25 into the
+ * showroom experience is a content task, not a code change — and no model
+ * loses its page while it waits for imagery.
+ *
+ * Both paths share the same hero, the same specification sheet, the same BaaS
+ * terms and the same FAQ, because those are the parts a customer must be able
+ * to rely on being identical wherever they look.
  */
 
 type PageParams = { params: Promise<{ slug: string }> };
@@ -120,6 +140,8 @@ export default async function ModelPage({ params }: PageParams) {
   const features = getProductFeatures(product);
   const related = getRelatedProducts(product.slug);
   const catalogue = getProducts();
+  const showroom = getShowroom(product.slug);
+  const branches = getBranches();
 
   const crumbs: Crumb[] = [
     { label: "Home", href: "/" },
@@ -146,93 +168,149 @@ export default async function ModelPage({ params }: PageParams) {
       <ProductProvider product={product}>
         <ProductHero catalogue={catalogue} />
 
-        <Section tone="muted" compact>
-          <SectionHeading
-            eyebrow="Gallery"
-            title={`A closer look at the ${brandedModel(product.name)}`}
-            description={product.description}
-          />
-          <div className="mt-10">
-            <ProductGallery images={product.gallery} productName={product.name} />
-          </div>
-        </Section>
+        {showroom ? (
+          <>
+            <Showroom showroom={showroom} />
 
-        <Section>
-          <SectionHeading
-            eyebrow="The numbers"
-            title="Performance, battery, range and charging"
-            description="Figures shown are for the variant selected above. Switch variant to see how they change."
-          />
-          <div className="mt-10">
-            <ProductHighlights />
-          </div>
-        </Section>
+            <Section id="variants">
+              <SectionHeading
+                align="center"
+                eyebrow="Select variant"
+                title={`${product.name} for you`}
+                description={showroom.intro}
+              />
+              <div className="mt-12">
+                <ShowroomVariants image={showroom.variantImage} />
+              </div>
+            </Section>
 
-        <Section tone="muted">
-          <SectionHeading
-            eyebrow="Technology"
-            title="Connected features"
-            description={`What the ${product.name} offers through the Lectrix EV mobile app.`}
-          />
-          <div className="mt-10">
-            <FeatureGrid
-              features={features.smart}
-              emptyMessage={`Connected features for the ${product.name} are being confirmed with Lectrix EV. Ask the showroom what this model supports.`}
+            <Section id="specifications" tone="muted">
+              <SectionHeading
+                eyebrow="Specifications"
+                title="Every figure, in one place"
+                description="The full specification sheet for the variant you have selected. Figures we have not confirmed with Lectrix EV are shown as a dash rather than filled in."
+              />
+              <div className="mt-10">
+                <SpecTable />
+              </div>
+            </Section>
+
+            <Container className="py-4">
+              <ProductBaas />
+            </Container>
+
+            <EvSavingsCalculator
+              id="savings"
+              tone="default"
+              eyebrow="Ownership"
+              title={`What the ${product.name} costs to run`}
+              description={`Petrol against charging, on your own numbers. Change any figure and the estimate updates — then bring it to the showroom and we will work through the on-road price of the ${brandedModel(product.name)} with you.`}
             />
-          </div>
-        </Section>
+          </>
+        ) : (
+          <>
+            <Section tone="muted" compact>
+              <SectionHeading
+                eyebrow="Gallery"
+                title={`A closer look at the ${brandedModel(product.name)}`}
+                description={product.description}
+              />
+              <div className="mt-10">
+                <ProductGallery images={product.gallery} productName={product.name} />
+              </div>
+            </Section>
 
-        <Section>
-          <div className="grid gap-14 lg:grid-cols-2 lg:gap-12">
-            <div>
-              <SectionHeading eyebrow="Safety" title="Built to keep you safe" />
-              <div className="mt-8">
+            <Section>
+              <SectionHeading
+                eyebrow="The numbers"
+                title="Performance, battery, range and charging"
+                description="Figures shown are for the variant selected above. Switch variant to see how they change."
+              />
+              <div className="mt-10">
+                <ProductHighlights />
+              </div>
+            </Section>
+
+            <Section tone="muted">
+              <SectionHeading
+                eyebrow="Technology"
+                title="Connected features"
+                description={`What the ${product.name} offers through the Lectrix EV mobile app.`}
+              />
+              <div className="mt-10">
                 <FeatureGrid
-                  features={features.safety}
-                  columns={2}
-                  emptyMessage={`Safety equipment for the ${product.name} is being confirmed with Lectrix EV. We will not list a feature until we know this model has it.`}
+                  features={features.smart}
+                  emptyMessage={`Connected features for the ${product.name} are being confirmed with Lectrix EV. Ask the showroom what this model supports.`}
                 />
               </div>
-            </div>
+            </Section>
 
-            <div>
-              <SectionHeading eyebrow="Comfort & storage" title="Made for everyday riding" />
-              <div className="mt-8">
-                <FeatureGrid
-                  features={features.comfort}
-                  columns={2}
-                  emptyMessage={`Comfort and storage details for the ${product.name} are being confirmed with Lectrix EV.`}
-                />
+            <Section>
+              <div className="grid gap-14 lg:grid-cols-2 lg:gap-12">
+                <div>
+                  <SectionHeading eyebrow="Safety" title="Built to keep you safe" />
+                  <div className="mt-8">
+                    <FeatureGrid
+                      features={features.safety}
+                      columns={2}
+                      emptyMessage={`Safety equipment for the ${product.name} is being confirmed with Lectrix EV. We will not list a feature until we know this model has it.`}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <SectionHeading
+                    eyebrow="Comfort & storage"
+                    title="Made for everyday riding"
+                  />
+                  <div className="mt-8">
+                    <FeatureGrid
+                      features={features.comfort}
+                      columns={2}
+                      emptyMessage={`Comfort and storage details for the ${product.name} are being confirmed with Lectrix EV.`}
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </Section>
+            </Section>
 
-        <Section tone="muted">
-          <SectionHeading
-            eyebrow="Colours"
-            title={`Pick your ${brandedModel(product.name)}`}
-            description="Finishes available on the selected variant."
-          />
-          <div className="mt-10">
-            <ColorSwatches />
-          </div>
-        </Section>
+            <Section tone="muted">
+              <SectionHeading
+                eyebrow="Colours"
+                title={`Pick your ${brandedModel(product.name)}`}
+                description="Finishes available on the selected variant."
+              />
+              <div className="mt-10">
+                <ColorSwatches />
+              </div>
+            </Section>
 
-        <Section id="specifications">
-          <SectionHeading
-            eyebrow="Specifications"
-            title="Every figure, in one place"
-            description="The full specification sheet for the variant you have selected."
-          />
-          <div className="mt-10">
-            <SpecTable />
-          </div>
-        </Section>
+            <Section id="specifications">
+              <SectionHeading
+                eyebrow="Specifications"
+                title="Every figure, in one place"
+                description="The full specification sheet for the variant you have selected."
+              />
+              <div className="mt-10">
+                <SpecTable />
+              </div>
+            </Section>
 
-        <Container className="py-4">
-          <ProductBaas />
-        </Container>
+            <Container className="py-4">
+              <ProductBaas />
+            </Container>
+          </>
+        )}
+
+        <FaqSection
+          faqs={faqs}
+          title={`${product.name} questions`}
+          description={`The things customers ask us most often about the ${product.name}. If yours is not here, call the showroom.`}
+        />
+
+        {showroom ? (
+          <ShowroomConversion catalogue={catalogue} branches={branches} />
+        ) : null}
       </ProductProvider>
 
       <Section tone="muted">
@@ -254,32 +332,28 @@ export default async function ModelPage({ params }: PageParams) {
         </div>
       </Section>
 
-      <FaqSection
-        faqs={faqs}
-        title={`${product.name} questions`}
-        description={`The things customers ask us most often about the ${product.name}. If yours is not here, call the showroom.`}
-      />
-
-      <Section tone="inverse">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-display-lg">Ride the {product.name}</h2>
-          <p className="text-on-inverse-muted mt-5 text-lead text-pretty">
-            Test rides are free and take about fifteen minutes. Bring your licence — we
-            will have the {product.name} charged and ready.
-          </p>
-          <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
-            <Button asChild variant="brand" size="xl">
-              <Link href={`/book-test-ride?model=${product.slug}`}>Book Test Ride</Link>
-            </Button>
-            <Button asChild variant="outline-inverse" size="xl">
-              <Link href={`/on-road-price?model=${product.slug}`}>
-                <IndianRupee aria-hidden />
-                Get On-Road Price
-              </Link>
-            </Button>
+      {showroom ? null : (
+        <Section tone="inverse">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-display-lg">Ride the {product.name}</h2>
+            <p className="text-on-inverse-muted mt-5 text-lead text-pretty">
+              Test rides are free and take about fifteen minutes. Bring your licence — we
+              will have the {product.name} charged and ready.
+            </p>
+            <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+              <Button asChild variant="brand" size="xl">
+                <Link href={`/book-test-ride?model=${product.slug}`}>Book Test Ride</Link>
+              </Button>
+              <Button asChild variant="outline-inverse" size="xl">
+                <Link href={`/on-road-price?model=${product.slug}`}>
+                  <IndianRupee aria-hidden />
+                  Get On-Road Price
+                </Link>
+              </Button>
+            </div>
           </div>
-        </div>
-      </Section>
+        </Section>
+      )}
     </>
   );
 }

@@ -91,6 +91,10 @@ export function resolveSpecs(
       override.gradeabilityPercent !== undefined
         ? override.gradeabilityPercent
         : base.gradeabilityPercent,
+    gradeabilityDegrees:
+      override.gradeabilityDegrees !== undefined
+        ? override.gradeabilityDegrees
+        : base.gradeabilityDegrees,
     ipRating: override.ipRating !== undefined ? override.ipRating : base.ipRating,
     bootSpaceLitres:
       override.bootSpaceLitres !== undefined
@@ -181,6 +185,21 @@ export function getProductAvailability(product: Product) {
     return "coming-soon" as const;
   }
   return "discontinued" as const;
+}
+
+/**
+ * Gradeability as the manufacturer published it.
+ *
+ * A brand states the climb either as a percentage or as an angle, never both,
+ * and the two are not interchangeable without doing arithmetic the brand did
+ * not do. So whichever field carries a value is the one rendered, degrees
+ * first because that is the more commonly published form; `null` when neither
+ * has been confirmed, which every caller renders as the pending placeholder.
+ */
+export function formatGradeability(specs: ProductSpecs): string | null {
+  if (specs.gradeabilityDegrees != null) return `${specs.gradeabilityDegrees}\u00b0`;
+  if (specs.gradeabilityPercent != null) return `${specs.gradeabilityPercent}%`;
+  return null;
 }
 
 /* -------------------------------------------------------------------------- */

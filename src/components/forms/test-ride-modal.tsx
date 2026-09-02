@@ -25,11 +25,14 @@ export function TestRideModal({
   products,
   defaultModel,
   defaultVariant,
+  defaultBranch,
   children,
 }: {
   products: Product[];
   defaultModel?: string;
   defaultVariant?: string;
+  /** Preselected showroom, so a branch-aware CTA opens on the right counter. */
+  defaultBranch?: string;
   /** The trigger — any button or link. */
   children: React.ReactNode;
 }) {
@@ -61,6 +64,7 @@ export function TestRideModal({
             products={products}
             defaultModel={defaultModel}
             defaultVariant={defaultVariant}
+            defaultBranch={defaultBranch}
           />
         </div>
       </DialogContent>

@@ -4,6 +4,7 @@ import { BatteryCharging, Gauge, PlugZap, Route } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { formatSpec, TBD } from "@/lib/format";
+import { formatGradeability } from "@/lib/product-utils";
 import { useProduct } from "@/components/product/product-provider";
 
 interface Highlight {
@@ -32,10 +33,7 @@ export function ProductHighlights() {
         { label: "0–40 km/h", value: formatSpec(specs.accelerationSeconds, "s", 1) },
         { label: "Motor", value: specs.motor.type ?? TBD },
         { label: "Peak power", value: formatSpec(specs.motor.peakPowerW, "W") },
-        {
-          label: "Gradeability",
-          value: formatSpec(specs.gradeabilityPercent, "%"),
-        },
+        { label: "Gradeability", value: formatGradeability(specs) ?? TBD },
       ],
     },
     {

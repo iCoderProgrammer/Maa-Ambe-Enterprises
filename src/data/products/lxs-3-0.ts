@@ -29,6 +29,7 @@ export const lxs30: Product = {
     charging: { fullChargeHours: null, eightyPercentHours: null, chargerType: null },
     motor: { type: null, ratedPowerW: null, peakPowerW: null },
     gradeabilityPercent: null,
+    gradeabilityDegrees: null,
     ipRating: null,
     bootSpaceLitres: null,
     kerbWeightKg: null,

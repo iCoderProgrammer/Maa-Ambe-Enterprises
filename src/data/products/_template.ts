@@ -37,6 +37,7 @@ export const templateProduct: Product = {
     },
     motor: { type: "BLDC hub motor", ratedPowerW: 1200, peakPowerW: 2200 },
     gradeabilityPercent: 12,
+    gradeabilityDegrees: null,
     ipRating: "IP67",
     bootSpaceLitres: 22,
     kerbWeightKg: 88,

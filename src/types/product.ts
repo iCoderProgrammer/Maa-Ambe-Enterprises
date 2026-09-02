@@ -96,6 +96,15 @@ export interface ProductSpecs {
   motor: MotorSpec;
   /** Maximum climbable gradient, percent. */
   gradeabilityPercent: number | null;
+  /**
+   * Maximum climbable gradient, degrees.
+   *
+   * Kept separate from `gradeabilityPercent` rather than converted: a
+   * manufacturer publishes one or the other, and silently turning "16°" into
+   * "28.7%" would present a derived figure as a published one. Whichever the
+   * brand states is the one that is filled in.
+   */
+  gradeabilityDegrees: number | null;
   /** Ingress protection rating of the battery/motor, e.g. "IP67". */
   ipRating: string | null;
   bootSpaceLitres: number | null;

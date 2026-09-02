@@ -4,6 +4,7 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import { formatPrice, formatSpec, TBD } from "@/lib/format";
+import { formatGradeability } from "@/lib/product-utils";
 import { useProduct } from "@/components/product/product-provider";
 
 interface SpecRow {
@@ -53,7 +54,7 @@ export function SpecTable() {
         { label: "Motor type", value: specs.motor.type ?? TBD },
         { label: "Rated power", value: formatSpec(specs.motor.ratedPowerW, "W") },
         { label: "Peak power", value: formatSpec(specs.motor.peakPowerW, "W") },
-        { label: "Gradeability", value: formatSpec(specs.gradeabilityPercent, "%") },
+        { label: "Gradeability", value: formatGradeability(specs) ?? TBD },
         {
           label: "Riding modes",
           value: specs.ridingModes.length > 0 ? specs.ridingModes.join(", ") : TBD,

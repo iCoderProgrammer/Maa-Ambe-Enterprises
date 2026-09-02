@@ -60,8 +60,25 @@ const fields: {
  *
  * The arithmetic lives in `lib/calculators/ev-savings.ts`; this component only
  * collects input and presents the result. Every output is labelled an estimate.
+ *
+ * The heading is overridable so the same calculator can sit inside a model's
+ * ownership story ("what an NDuro costs to run") without the maths being
+ * reimplemented, or the defaults, limits and disclaimer being restated, for
+ * each place it appears.
  */
-export function EvSavingsCalculator() {
+export function EvSavingsCalculator({
+  id = "savings",
+  tone = "muted",
+  eyebrow = "Running costs",
+  title = "See what you could save",
+  description = "Enter how you ride today and compare a month of petrol against a month of charging. Change any number — the estimate updates instantly.",
+}: {
+  id?: string;
+  tone?: React.ComponentProps<typeof Section>["tone"];
+  eyebrow?: string;
+  title?: string;
+  description?: string;
+} = {}) {
   const [values, setValues] = React.useState<Record<FieldKey, number>>({
     ...evSavingsDefaults,
   });
@@ -79,12 +96,8 @@ export function EvSavingsCalculator() {
   const savingPercent = Math.max(0, Math.round(result.savingRatio * 100));
 
   return (
-    <Section id="savings" tone="muted">
-      <SectionHeading
-        eyebrow="Running costs"
-        title="See what you could save"
-        description="Enter how you ride today and compare a month of petrol against a month of charging. Change any number — the estimate updates instantly."
-      />
+    <Section id={id} tone={tone}>
+      <SectionHeading eyebrow={eyebrow} title={title} description={description} />
 
       <div className="mt-12 grid gap-8 lg:grid-cols-[1.15fr_1fr] lg:gap-12">
         <div className="bg-background border-hairline rounded-2xl border p-6 sm:p-8">

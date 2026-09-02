@@ -50,6 +50,7 @@ const specsShape = {
   charging: chargingSchema,
   motor: motorSchema,
   gradeabilityPercent: measurement,
+  gradeabilityDegrees: measurement,
   ipRating: z.string().min(1).nullable(),
   bootSpaceLitres: measurement,
   kerbWeightKg: measurement,
