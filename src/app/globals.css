@@ -1,0 +1,365 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ==========================================================================
+   LECTRIX EV — DESIGN TOKENS
+   Single source of truth for colour, type, spacing, radius, shadow, motion.
+   Never hard-code a hex, px font-size or duration in a component.
+   ========================================================================== */
+
+@theme inline {
+  /* ---------- Typography ---------- */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-sora), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-display);
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Fluid display scale — clamp(min, preferred, max) */
+  --text-display-2xl: clamp(2.75rem, 1.45rem + 5.6vw, 5.5rem);
+  --text-display-2xl--line-height: 0.96;
+  --text-display-2xl--letter-spacing: -0.035em;
+  --text-display-2xl--font-weight: 600;
+
+  --text-display-xl: clamp(2.25rem, 1.35rem + 4vw, 4.25rem);
+  --text-display-xl--line-height: 1;
+  --text-display-xl--letter-spacing: -0.032em;
+  --text-display-xl--font-weight: 600;
+
+  --text-display-lg: clamp(2rem, 1.4rem + 2.7vw, 3.25rem);
+  --text-display-lg--line-height: 1.06;
+  --text-display-lg--letter-spacing: -0.028em;
+  --text-display-lg--font-weight: 600;
+
+  --text-display-md: clamp(1.75rem, 1.35rem + 1.9vw, 2.5rem);
+  --text-display-md--line-height: 1.12;
+  --text-display-md--letter-spacing: -0.024em;
+  --text-display-md--font-weight: 600;
+
+  --text-display-sm: clamp(1.375rem, 1.2rem + 0.9vw, 1.75rem);
+  --text-display-sm--line-height: 1.2;
+  --text-display-sm--letter-spacing: -0.018em;
+  --text-display-sm--font-weight: 600;
+
+  /* Body / support scale */
+  --text-lead: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
+  --text-lead--line-height: 1.6;
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1;
+  --text-eyebrow--letter-spacing: 0.14em;
+  --text-eyebrow--font-weight: 600;
+
+  /* ---------- Brand colour ramp (electric green) ---------- */
+  --color-brand-50: oklch(0.968 0.042 152);
+  --color-brand-100: oklch(0.936 0.075 152);
+  --color-brand-200: oklch(0.892 0.116 151);
+  --color-brand-300: oklch(0.842 0.15 151);
+  --color-brand-400: oklch(0.784 0.172 150);
+  --color-brand-500: oklch(0.717 0.176 150);
+  --color-brand-600: oklch(0.628 0.158 151);
+  --color-brand-700: oklch(0.523 0.13 152);
+  --color-brand-800: oklch(0.432 0.104 153);
+  --color-brand-900: oklch(0.362 0.083 154);
+  --color-brand-950: oklch(0.242 0.056 155);
+
+  /* ---------- Ink ramp (cool near-black neutrals) ---------- */
+  --color-ink-50: oklch(0.977 0.003 258);
+  --color-ink-100: oklch(0.948 0.004 258);
+  --color-ink-200: oklch(0.897 0.005 258);
+  --color-ink-300: oklch(0.806 0.007 258);
+  --color-ink-400: oklch(0.681 0.01 258);
+  --color-ink-500: oklch(0.563 0.012 258);
+  --color-ink-600: oklch(0.452 0.013 258);
+  --color-ink-700: oklch(0.343 0.014 258);
+  --color-ink-800: oklch(0.259 0.014 258);
+  --color-ink-900: oklch(0.191 0.014 258);
+  --color-ink-950: oklch(0.143 0.013 258);
+
+  /* ---------- Semantic colour (shadcn contract) ---------- */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Brand semantic aliases */
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-inverse: var(--surface-inverse);
+  --color-on-inverse: var(--on-inverse);
+  --color-on-inverse-muted: var(--on-inverse-muted);
+  --color-hairline: var(--hairline);
+
+  /* ---------- Radius ---------- */
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 0.75);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.35);
+  --radius-2xl: calc(var(--radius) * 1.75);
+  --radius-3xl: calc(var(--radius) * 2.25);
+  --radius-4xl: calc(var(--radius) * 3);
+
+  /* ---------- Elevation ---------- */
+  --shadow-xs: 0 1px 2px 0 oklch(0.143 0.013 258 / 0.05);
+  --shadow-sm: 0 1px 3px 0 oklch(0.143 0.013 258 / 0.07), 0 1px 2px -1px oklch(0.143 0.013 258 / 0.05);
+  --shadow-md: 0 4px 12px -2px oklch(0.143 0.013 258 / 0.08), 0 2px 4px -2px oklch(0.143 0.013 258 / 0.05);
+  --shadow-lg: 0 12px 28px -8px oklch(0.143 0.013 258 / 0.12), 0 4px 10px -4px oklch(0.143 0.013 258 / 0.06);
+  --shadow-xl: 0 28px 60px -18px oklch(0.143 0.013 258 / 0.18), 0 8px 20px -8px oklch(0.143 0.013 258 / 0.08);
+  --shadow-brand: 0 10px 30px -10px oklch(0.628 0.158 151 / 0.45);
+
+  /* ---------- Motion ---------- */
+  --ease-out-brand: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-brand: cubic-bezier(0.65, 0, 0.35, 1);
+  --animate-marquee: marquee 38s linear infinite;
+  --animate-pulse-ring: pulse-ring 2.4s var(--ease-in-out-brand) infinite;
+  --animate-scroll-hint: scroll-hint 1.9s var(--ease-in-out-brand) infinite;
+
+  /* ---------- Breakpoints ---------- */
+  --breakpoint-xs: 22.5rem;  /* 360px  — small Android */
+  --breakpoint-3xl: 96rem;   /* 1536px — large desktop */
+
+  /* ---------- Layout ---------- */
+  --container-content: 78rem; /* 1248px max content width */
+}
+
+/* ==========================================================================
+   THEME VALUES
+   ========================================================================== */
+
+:root {
+  --radius: 0.75rem;
+
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.143 0.013 258);
+
+  --surface: oklch(1 0 0);
+  --surface-muted: oklch(0.977 0.003 258);
+  --surface-inverse: oklch(0.143 0.013 258);
+  --on-inverse: oklch(0.977 0.003 258);
+  --on-inverse-muted: oklch(0.681 0.01 258);
+  --hairline: oklch(0.897 0.005 258);
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.143 0.013 258);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.143 0.013 258);
+
+  /* Primary = ink. Premium automotive CTAs are solid, not gradient. */
+  --primary: oklch(0.143 0.013 258);
+  --primary-foreground: oklch(0.977 0.003 258);
+
+  /* Brand = electric green, reserved for the highest-intent conversion CTA. */
+  --brand: oklch(0.717 0.176 150);
+  --brand-foreground: oklch(0.143 0.013 258);
+
+  --secondary: oklch(0.948 0.004 258);
+  --secondary-foreground: oklch(0.191 0.014 258);
+  --muted: oklch(0.977 0.003 258);
+  --muted-foreground: oklch(0.452 0.013 258);
+  --accent: oklch(0.948 0.004 258);
+  --accent-foreground: oklch(0.191 0.014 258);
+
+  --destructive: oklch(0.577 0.245 27.325);
+  --success: oklch(0.523 0.13 152);
+
+  --border: oklch(0.897 0.005 258);
+  --input: oklch(0.897 0.005 258);
+  --ring: oklch(0.628 0.158 151);
+}
+
+.dark {
+  --background: oklch(0.143 0.013 258);
+  --foreground: oklch(0.977 0.003 258);
+
+  --surface: oklch(0.191 0.014 258);
+  --surface-muted: oklch(0.191 0.014 258);
+  --surface-inverse: oklch(0.977 0.003 258);
+  --on-inverse: oklch(0.143 0.013 258);
+  --on-inverse-muted: oklch(0.452 0.013 258);
+  --hairline: oklch(1 0 0 / 0.12);
+
+  --card: oklch(0.191 0.014 258);
+  --card-foreground: oklch(0.977 0.003 258);
+  --popover: oklch(0.191 0.014 258);
+  --popover-foreground: oklch(0.977 0.003 258);
+
+  --primary: oklch(0.977 0.003 258);
+  --primary-foreground: oklch(0.143 0.013 258);
+
+  --brand: oklch(0.784 0.172 150);
+  --brand-foreground: oklch(0.143 0.013 258);
+
+  --secondary: oklch(0.259 0.014 258);
+  --secondary-foreground: oklch(0.977 0.003 258);
+  --muted: oklch(0.259 0.014 258);
+  --muted-foreground: oklch(0.681 0.01 258);
+  --accent: oklch(0.259 0.014 258);
+  --accent-foreground: oklch(0.977 0.003 258);
+
+  --destructive: oklch(0.704 0.191 22.216);
+  --success: oklch(0.784 0.172 150);
+
+  --border: oklch(1 0 0 / 0.12);
+  --input: oklch(1 0 0 / 0.16);
+  --ring: oklch(0.717 0.176 150);
+}
+
+/* ==========================================================================
+   BASE
+   ========================================================================== */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply font-sans;
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Headings default to the display face; size stays a per-usage decision. */
+  h1, h2, h3, h4 {
+    @apply font-display text-balance;
+  }
+
+  /* One consistent, always-visible focus treatment across the whole site. */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+
+  /* Anchor targets clear the sticky header. */
+  :target {
+    scroll-margin-top: 6rem;
+  }
+
+  ::selection {
+    background-color: var(--brand);
+    color: var(--brand-foreground);
+  }
+}
+
+/* ==========================================================================
+   UTILITIES
+   ========================================================================== */
+
+/* Vertical rhythm for page sections — one scale, used everywhere. */
+@utility section-y {
+  padding-block: clamp(3.5rem, 2rem + 6vw, 7.5rem);
+}
+
+@utility section-y-sm {
+  padding-block: clamp(2.5rem, 1.75rem + 3.5vw, 4.5rem);
+}
+
+/* Screen-reader-only, with a focusable escape hatch (skip link). */
+@utility sr-only-focusable {
+  &:not(:focus):not(:focus-within) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* Fade an overflowing scroller at its edges (mobile comparison rails). */
+@utility scroll-fade-x {
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 1.25rem,
+    black calc(100% - 1.25rem),
+    transparent 100%
+  );
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Reserve space for the mobile action bar so content is never covered. */
+@utility pb-action-bar {
+  padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+  @variant md {
+    padding-bottom: 0;
+  }
+}
+
+/* ==========================================================================
+   KEYFRAMES
+   ========================================================================== */
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes pulse-ring {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 0; transform: scale(1.7); }
+}
+
+@keyframes scroll-hint {
+  0% { opacity: 0; transform: translateY(-40%); }
+  40% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(140%); }
+}
+
+/* ==========================================================================
+   REDUCED MOTION — global kill switch
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  /* Entrance elements are server-rendered carrying the `hidden` variant's
+     offset, because the server cannot read this media query. Framer clears the
+     transform once it hydrates; this stops the element being visibly displaced
+     in the meantime. Opacity is deliberately left alone — the fade still runs,
+     which is what makes the content appear. */
+  [data-motion] {
+    transform: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
