@@ -16,7 +16,7 @@ import {
 import { DEALERSHIP_NAME } from "@/lib/brand";
 
 /**
- * "The People Behind Maa Ambe Enterprises".
+ * "The People Behind Maa Ambey Enterprises".
  *
  * Three states, all driven by `src/data/team.ts`:
  *

@@ -49,7 +49,7 @@ function resolveSiteUrl(): string {
  * Site-wide metadata defaults. Page-level metadata extends these rather than
  * redefining them, so a change here propagates everywhere.
  *
- * `name` is the DEALERSHIP — this website belongs to Maa Ambe Enterprises,
+ * `name` is the DEALERSHIP — this website belongs to Maa Ambey Enterprises,
  * not to the manufacturer. `brand` is the vehicle brand it sells. Search
  * engines, OG cards and structured data all read those two fields, so keeping
  * them distinct here is what keeps the distinction true everywhere else.
@@ -57,7 +57,7 @@ function resolveSiteUrl(): string {
 export const siteConfig = {
   /** Site owner: the local business. */
   name: dealership.dealershipName,
-  shortName: "Maa Ambe",
+  shortName: "Maa Ambey",
   /** The dealership's relationship to the brand, as one line. */
   identity: DEALERSHIP_IDENTITY,
   /** Vehicle brand on sale here. Never the site owner. */

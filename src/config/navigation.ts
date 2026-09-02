@@ -46,7 +46,7 @@ export const primaryNav: NavItem[] = [
   {
     label: "Our Showroom",
     href: "/showroom",
-    description: "Visit Maa Ambe Enterprises",
+    description: "Visit Maa Ambey Enterprises",
     icon: Building2,
   },
   {
@@ -58,7 +58,7 @@ export const primaryNav: NavItem[] = [
   {
     label: "About",
     href: "/about",
-    description: "About Maa Ambe Enterprises",
+    description: "About Maa Ambey Enterprises",
     icon: Info,
   },
   {

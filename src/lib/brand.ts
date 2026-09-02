@@ -5,7 +5,7 @@ import { dealership } from "@/data/dealership";
  *
  * Two identities appear on this website and they must never blur:
  *
- *   DEALERSHIP  Maa Ambe Enterprises — the local business, the site's own
+ *   DEALERSHIP  Maa Ambey Enterprises — the local business, the site's own
  *               identity, the party a customer calls, visits and buys from.
  *   BRAND       Lectrix EV — the manufacturer of the scooters on display.
  *
@@ -21,13 +21,13 @@ export const VEHICLE_BRAND = dealership.brand;
 /** "Lectrix" — model-name prefix, e.g. "Lectrix NDuro". */
 export const VEHICLE_BRAND_SHORT = dealership.brandShort;
 
-/** "Maa Ambe Enterprises" — the dealership. Never the manufacturer. */
+/** "Maa Ambey Enterprises" — the dealership. Never the manufacturer. */
 export const DEALERSHIP_NAME = dealership.dealershipName;
 
 /** "Authorized Lectrix EV Dealership" — the relationship, stated plainly. */
 export const DEALERSHIP_LINE = dealership.brandLine;
 
-/** "Maa Ambe Enterprises — Authorized Lectrix EV Dealership" */
+/** "Maa Ambey Enterprises — Authorized Lectrix EV Dealership" */
 export const DEALERSHIP_IDENTITY = `${DEALERSHIP_NAME} — ${DEALERSHIP_LINE}`;
 
 /**
@@ -44,12 +44,12 @@ export function brandedModel(modelName: string): string {
     : `${VEHICLE_BRAND_SHORT} ${modelName}`;
 }
 
-/** "Lectrix NDuro, available at Maa Ambe Enterprises" */
+/** "Lectrix NDuro, available at Maa Ambey Enterprises" */
 export function modelAtDealership(modelName: string): string {
   return `${brandedModel(modelName)}, available at ${DEALERSHIP_NAME}`;
 }
 
-/** "Lectrix EV electric scooters at Maa Ambe Enterprises" */
+/** "Lectrix EV electric scooters at Maa Ambey Enterprises" */
 export function brandAtDealership(subject = "electric scooters"): string {
   return `${VEHICLE_BRAND} ${subject} at ${DEALERSHIP_NAME}`;
 }

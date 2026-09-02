@@ -20,7 +20,7 @@ interface LogoProps extends React.ComponentProps<"span"> {
 /**
  * Brand lockup for the dealership.
  *
- * The primary line is the business — Maa Ambe Enterprises. The supporting
+ * The primary line is the business — Maa Ambey Enterprises. The supporting
  * line states the relationship to the vehicle brand and keeps "Lectrix EV"
  * visually identifiable in the brand colour, so a visitor reads at a glance
  * that this is a Lectrix EV dealership rather than Lectrix EV itself.

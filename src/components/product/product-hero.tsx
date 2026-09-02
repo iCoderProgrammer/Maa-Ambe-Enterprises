@@ -33,7 +33,7 @@ const availabilityLabel = {
  * have to start again on another page.
  *
  * The heading names the vehicle as a Lectrix and the badge names where it can
- * be bought, so the page reads "Lectrix NDuro, available at Maa Ambe
+ * be bought, so the page reads "Lectrix NDuro, available at Maa Ambey
  * Enterprises" rather than implying the dealership builds it.
  */
 export function ProductHero({ catalogue }: { catalogue: Product[] }) {

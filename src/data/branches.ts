@@ -1,7 +1,7 @@
 /**
  * Branch (showroom) registry.
  *
- * Maa Ambe Enterprises operates through one or more showrooms. Everything that
+ * Maa Ambey Enterprises operates through one or more showrooms. Everything that
  * varies BY LOCATION lives here — address, phone, WhatsApp, hours, map, the
  * models on that floor and the services that counter offers. Everything that
  * describes the BUSINESS as a whole — its name, its relationship to Lectrix EV,
@@ -11,10 +11,10 @@
  *
  * BRAND HIERARCHY, unchanged by any of this:
  *
- *   Maa Ambe Enterprises = the dealership, operating these branches.
+ *   Maa Ambey Enterprises = the dealership, operating these branches.
  *   Lectrix EV           = the vehicle brand sold and serviced at them.
  *
- * A branch is a place you can visit Maa Ambe Enterprises. It is never a
+ * A branch is a place you can visit Maa Ambey Enterprises. It is never a
  * manufacturer, a sub-brand, or a "Lectrix EV branch".
  *
  * ADDING A BRANCH

@@ -1,5 +1,5 @@
 /**
- * The people who run Maa Ambe Enterprises.
+ * The people who run Maa Ambey Enterprises.
  *
  * NOTHING IN THIS FILE MAY BE INVENTED.
  *
@@ -121,7 +121,7 @@ export const team: TeamMember[] = [
     category: "owner",
     photo: {
       src: "/images/team/owner.png",
-      alt: "Placeholder portrait for the owner of Maa Ambe Enterprises",
+      alt: "Placeholder portrait for the owner of Maa Ambey Enterprises",
       width: 800,
       height: 1000,
     },

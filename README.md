@@ -1,6 +1,6 @@
-# Maa Ambe Enterprises — Lectrix EV Dealership Website
+# Maa Ambey Enterprises — Lectrix EV Dealership Website
 
-A production-shaped marketing and lead-capture site for **Maa Ambe Enterprises**, an authorized **Lectrix EV** dealership. It presents the scooter lineup, answers the questions a buyer actually asks (range, on-road price, EMI, battery subscription, warranty, service), and turns interest into a lead the showroom can call back.
+A production-shaped marketing and lead-capture site for **Maa Ambey Enterprises**, an authorized **Lectrix EV** dealership. It presents the scooter lineup, answers the questions a buyer actually asks (range, on-road price, EMI, battery subscription, warranty, service), and turns interest into a lead the showroom can call back.
 
 Two identities appear throughout and never blur: the **dealership** owns the site; **Lectrix EV** is the manufacturer of the scooters on sale. That distinction is enforced in code (`src/lib/brand.ts`) so it reads the same way in a hero, a page title, an OG card and a JSON-LD block.
 

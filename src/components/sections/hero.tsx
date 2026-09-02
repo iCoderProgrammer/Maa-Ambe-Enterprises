@@ -12,7 +12,7 @@ import { DEALERSHIP_LINE, DEALERSHIP_NAME, VEHICLE_BRAND } from "@/lib/brand";
  * Homepage hero.
  *
  * Opens by naming the dealership and its relationship to the vehicle brand,
- * so the first line a visitor reads establishes that Maa Ambe Enterprises
+ * so the first line a visitor reads establishes that Maa Ambey Enterprises
  * sells Lectrix EV rather than being it.
  */
 export function Hero() {

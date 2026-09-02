@@ -50,7 +50,7 @@ const cityKnown = !isPlaceholder("address");
  */
 // The dealership name is appended by the metadata template in the root layout,
 // so it is deliberately absent here — including it would title the page
-// "Maa Ambe Enterprises — ... | Maa Ambe Enterprises".
+// "Maa Ambey Enterprises — ... | Maa Ambey Enterprises".
 const title = cityKnown
   ? `Lectrix EV Showroom in ${city}`
   : "Our Lectrix EV Showroom";

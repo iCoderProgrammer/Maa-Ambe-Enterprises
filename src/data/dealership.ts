@@ -20,7 +20,7 @@
  *
  * BRAND HIERARCHY — the one rule this file exists to enforce:
  *
- *   Maa Ambe Enterprises = the dealership / showroom / local business.
+ *   Maa Ambey Enterprises = the dealership / showroom / local business.
  *   Lectrix EV            = the vehicle brand / manufacturer.
  *
  * The dealership sells and services Lectrix EV scooters; it does not build
@@ -101,14 +101,14 @@ export interface DealershipConfig {
 const primaryBranch = getPrimaryBranch();
 
 export const dealership: DealershipConfig = {
-  dealershipName: "Maa Ambe Enterprises",
-  legalName: "Maa Ambe Enterprises",
+  dealershipName: "Maa Ambey Enterprises",
+  legalName: "Maa Ambey Enterprises",
   brand: "Lectrix EV",
   brandShort: "Lectrix",
   brandLine: "Authorized Lectrix EV Dealership",
   tagline: "Your Electric Journey Starts Here",
   description:
-    "Maa Ambe Enterprises is an authorized Lectrix EV dealership. We sell and service Lectrix EV electric scooters, and handle test rides, finance, registration and after-sales support locally.",
+    "Maa Ambey Enterprises is an authorized Lectrix EV dealership. We sell and service Lectrix EV electric scooters, and handle test rides, finance, registration and after-sales support locally.",
   // Location fields mirror the primary branch. They are not a second copy to
   // keep in sync: change the showroom in `branches.ts` and these follow.
   address: primaryBranch.address,

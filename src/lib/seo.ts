@@ -13,7 +13,7 @@ import { getBranches, getPrimaryBranch, type Branch } from "@/data/branches";
  * drift from what the pages actually say. Placeholder dealership fields are
  * omitted rather than published as zeroes.
  *
- * The publisher of this site is the DEALERSHIP (Maa Ambe Enterprises); the
+ * The publisher of this site is the DEALERSHIP (Maa Ambey Enterprises); the
  * `brand` of every product is the MANUFACTURER (Lectrix EV). Google reads both,
  * so conflating them here would misrepresent the business in search results as
  * well as on the page.

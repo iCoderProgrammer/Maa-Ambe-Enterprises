@@ -18,7 +18,7 @@ import type { Product } from "@/types/product";
  *
  * WHY THE BRANCH PICKER IS HERE
  *
- * Maa Ambe Enterprises trades from more than one showroom, so "call us" and
+ * Maa Ambey Enterprises trades from more than one showroom, so "call us" and
  * "message us" are ambiguous until a customer has said which counter they
  * mean. Choosing a showroom rewrites the phone and WhatsApp links and preloads
  * the test-ride form, so the enquiry reaches the branch that can actually
