@@ -2,36 +2,39 @@ import { dealership } from "@/data/dealership";
 import { DEALERSHIP_IDENTITY, VEHICLE_BRAND } from "@/lib/brand";
 
 /**
- * Site-wide metadata defaults. Page-level metadata extends these rather than
- * redefining them, so a change here propagates everywhere.
- *
- * `name` is the DEALERSHIP — this website belongs to Maa Ambe Enterprises,
- * not to the manufacturer. `brand` is the vehicle brand it sells. Search
- * engines, OG cards and structured data all read those two fields, so keeping
- * them distinct here is what keeps the distinction true everywhere else.
- */
-/**
  * Resolve the public origin at build time.
  *
- * `NEXT_PUBLIC_SITE_URL` can arrive as an empty string (declared but blank on
- * the host, or inlined as "" by the bundler), which `??` does not catch — and
- * `new URL("")` throws, failing the production build. So: trim, ignore blanks,
- * add a scheme when the value is a bare host, and fall back to the Vercel
- * deployment URL before localhost.
+ * `NEXT_PUBLIC_SITE_URL` can arrive as an empty string — declared but left
+ * blank on the host, or inlined as "" by the bundler — which `??` does not
+ * treat as missing, and `new URL("")` throws, so the production build dies at
+ * module evaluation. Hence: trim, ignore blanks, and guard the parse.
+ *
+ * The only fallback is the project's stable production domain, and only on a
+ * production build. A preview must keep resolving to localhost: that is what
+ * makes `robots.ts` withhold indexing, and it stops a preview's canonicals
+ * from claiming URLs the real site needs. The per-deployment `VERCEL_URL` is
+ * deliberately not consulted — it changes on every build, so baking it into
+ * canonicals, the sitemap and JSON-LD would point them at a URL that stops
+ * being current the moment the next deployment lands.
  */
 function resolveSiteUrl(): string {
-  const candidates = [
-    process.env.NEXT_PUBLIC_SITE_URL,
-    process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL,
-    process.env.VERCEL_PROJECT_PRODUCTION_URL,
-    process.env.NEXT_PUBLIC_VERCEL_URL,
-    process.env.VERCEL_URL,
-  ];
+  const candidates = [process.env.NEXT_PUBLIC_SITE_URL];
+
+  if (process.env.VERCEL_ENV === "production") {
+    candidates.push(
+      process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL,
+      process.env.VERCEL_PROJECT_PRODUCTION_URL,
+    );
+  }
 
   for (const candidate of candidates) {
     const value = candidate?.trim();
     if (!value) continue;
+
+    // Vercel's system variables are bare hostnames; a hand-set value may or
+    // may not carry a scheme.
     const withScheme = /^https?:\/\//.test(value) ? value : `https://${value}`;
+
     try {
       return new URL(withScheme).origin;
     } catch {
@@ -42,6 +45,15 @@ function resolveSiteUrl(): string {
   return "http://localhost:3000";
 }
 
+/**
+ * Site-wide metadata defaults. Page-level metadata extends these rather than
+ * redefining them, so a change here propagates everywhere.
+ *
+ * `name` is the DEALERSHIP — this website belongs to Maa Ambe Enterprises,
+ * not to the manufacturer. `brand` is the vehicle brand it sells. Search
+ * engines, OG cards and structured data all read those two fields, so keeping
+ * them distinct here is what keeps the distinction true everywhere else.
+ */
 export const siteConfig = {
   /** Site owner: the local business. */
   name: dealership.dealershipName,
