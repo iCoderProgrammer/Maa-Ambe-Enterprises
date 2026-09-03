@@ -2,7 +2,7 @@
 
 import type { UseFormRegisterReturn } from "react-hook-form";
 
-import { Field, selectClassName } from "@/components/forms/field";
+import { Field, SelectControl } from "@/components/forms/field";
 import { branchLocality, getBranches, isBranchPlaceholder } from "@/data/branches";
 
 /**
@@ -34,13 +34,12 @@ export function BranchField({
   return (
     <Field label={label} error={error} required>
       {(props) => (
-        <select
+        <SelectControl
           {...props}
           {...registration}
           // Mirrored onto the element so the server renders the requested
           // branch selected, rather than the first one until hydration.
           defaultValue={defaultBranchId}
-          className={selectClassName}
         >
           {branches.map((branch) => (
             <option key={branch.branchId} value={branch.branchId}>
@@ -50,7 +49,7 @@ export function BranchField({
                 : ` — ${branchLocality(branch)}`}
             </option>
           ))}
-        </select>
+        </SelectControl>
       )}
     </Field>
   );

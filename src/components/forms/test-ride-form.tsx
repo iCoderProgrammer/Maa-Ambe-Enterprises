@@ -8,7 +8,7 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Field, selectClassName } from "@/components/forms/field";
+import { Field, SelectControl } from "@/components/forms/field";
 import { BranchField } from "@/components/forms/branch-field";
 import { getPrimaryBranch } from "@/data/branches";
 import { LeadSuccessState } from "@/components/forms/lead-success-state";
@@ -165,21 +165,20 @@ export function TestRideForm({
 
         <Field label="Model" error={errors.model?.message} required>
           {(props) => (
-            <select
+            <SelectControl
               {...props}
               {...register("model")}
               // Also set on the element so the server renders the right option
               // selected. react-hook-form applies its defaults on mount, which
               // would otherwise leave the first model showing until hydration.
               defaultValue={defaultModel ?? products[0]?.slug ?? ""}
-              className={selectClassName}
             >
               {products.map((product) => (
                 <option key={product.slug} value={product.slug}>
                   {brandedModel(product.name)}
                 </option>
               ))}
-            </select>
+            </SelectControl>
           )}
         </Field>
 
@@ -245,11 +244,10 @@ export function TestRideForm({
           required
         >
           {(props) => (
-            <select
+            <SelectControl
               {...props}
               {...register("preferredTime")}
               disabled={slots.length === 0}
-              className={selectClassName}
             >
               <option value="">
                 {slots.length === 0 ? "No slots available" : "Select a slot"}
@@ -259,7 +257,7 @@ export function TestRideForm({
                   {slot.label}
                 </option>
               ))}
-            </select>
+            </SelectControl>
           )}
         </Field>
       </div>

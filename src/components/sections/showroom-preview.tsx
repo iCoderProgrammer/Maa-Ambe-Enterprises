@@ -175,12 +175,23 @@ export function ShowroomPreview() {
           </dl>
 
           <div className="mt-8 space-y-3">
-            <Button asChild size="lg" block>
-              <a href={dealership.directionsUrl} target="_blank" rel="noopener noreferrer">
+            {dealership.directionsUrl ? (
+              <Button asChild size="lg" block>
+                <a
+                  href={dealership.directionsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Navigation aria-hidden />
+                  Get Directions
+                </a>
+              </Button>
+            ) : (
+              <Button size="lg" block disabled>
                 <Navigation aria-hidden />
                 Get Directions
-              </a>
-            </Button>
+              </Button>
+            )}
             <div className="grid grid-cols-2 gap-3">
               <Button asChild variant="outline" size="lg">
                 <a href={telUrl()}>

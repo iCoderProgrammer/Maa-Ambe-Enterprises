@@ -92,6 +92,10 @@ export {
   branchLocality,
   branchTelUrl,
   branchWhatsappUrl,
+  branchMapUrl,
+  branchDirectionsUrl,
+  branchMapEmbedUrl,
+  hasBranchMapLocation,
   groupedBranchHours,
   isKnownBranch,
 } from "@/data/branches";

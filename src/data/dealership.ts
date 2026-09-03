@@ -30,6 +30,9 @@
  */
 
 import {
+  branchDirectionsUrl,
+  branchMapEmbedUrl,
+  branchMapUrl,
   branchTelUrl,
   branchWhatsappUrl,
   formatBranchAddress,
@@ -83,10 +86,15 @@ export interface DealershipConfig {
   email: string;
   openingHours: OpeningHours[];
   geo: { latitude: number; longitude: number };
-  mapUrl: string;
+  /*
+   * The primary branch's Google Maps links, derived from its own coordinates
+   * or address. Null means that branch has neither yet — pages show that the
+   * location is being confirmed rather than linking to a generic maps page.
+   */
+  mapUrl: string | null;
   /** Embeddable map URL, e.g. a Google Maps `/maps/embed` link. */
   mapEmbedUrl: string | null;
-  directionsUrl: string;
+  directionsUrl: string | null;
   socialLinks: { label: string; href: string }[];
   /** Showroom photography. Empty until real images are supplied. */
   gallery: ShowroomImage[];
@@ -118,9 +126,12 @@ export const dealership: DealershipConfig = {
   email: primaryBranch.email,
   openingHours: primaryBranch.openingHours,
   geo: { latitude: primaryBranch.latitude, longitude: primaryBranch.longitude },
-  mapUrl: primaryBranch.mapUrl,
-  mapEmbedUrl: primaryBranch.mapEmbedUrl,
-  directionsUrl: primaryBranch.directionsUrl,
+  // Map links go through the branch helpers, so the primary showroom's own
+  // place link is used when it has one and a Google Maps link built from its
+  // coordinates or address when it does not.
+  mapUrl: branchMapUrl(primaryBranch),
+  mapEmbedUrl: branchMapEmbedUrl(primaryBranch),
+  directionsUrl: branchDirectionsUrl(primaryBranch),
   socialLinks: [
     { label: "Instagram", href: "https://instagram.com" },
     { label: "Facebook", href: "https://facebook.com" },

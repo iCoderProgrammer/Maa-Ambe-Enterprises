@@ -173,9 +173,11 @@ export default async function ShowroomPage({
               eyebrow={DEALERSHIP_LINE}
               title={`Experience Lectrix EV at ${DEALERSHIP_NAME}`}
               description={
-                cityKnown
-                  ? `Our showroom in ${city} has the full Lectrix EV range on the floor, test rides on demand, and the paperwork, finance and servicing all handled in one place.`
-                  : "The full Lectrix EV range on the floor, test rides on demand, and the paperwork, finance and servicing all handled in one place."
+                multiBranch
+                  ? `Every ${DEALERSHIP_NAME} showroom carries the full Lectrix EV range, with test rides on demand and the paperwork, finance and servicing all handled in one place. Pick the location that suits you.`
+                  : cityKnown
+                    ? `Our showroom in ${city} has the full Lectrix EV range on the floor, test rides on demand, and the paperwork, finance and servicing all handled in one place.`
+                    : "The full Lectrix EV range on the floor, test rides on demand, and the paperwork, finance and servicing all handled in one place."
               }
             />
 
@@ -183,19 +185,40 @@ export default async function ShowroomPage({
               <Button asChild variant="brand" size="xl">
                 <Link href="/book-test-ride">Book a Test Ride</Link>
               </Button>
-              <Button asChild variant="outline" size="xl">
-                <a
-                  href={dealership.directionsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+              {/* One set of directions cannot serve several showrooms, so the
+                  hero sends a visitor to the selector, where the address, map
+                  and directions all belong to the branch they choose. */}
+              {multiBranch ? (
+                <Button asChild variant="outline" size="xl">
+                  <Link href="#location">
+                    Find your showroom
+                    <ArrowRight aria-hidden />
+                  </Link>
+                </Button>
+              ) : dealership.directionsUrl ? (
+                <Button asChild variant="outline" size="xl">
+                  <a
+                    href={dealership.directionsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Get Directions
+                    <ArrowRight aria-hidden />
+                  </a>
+                </Button>
+              ) : (
+                <Button variant="outline" size="xl" disabled>
                   Get Directions
                   <ArrowRight aria-hidden />
-                </a>
-              </Button>
+                </Button>
+              )}
             </div>
 
-            <p className="text-muted-foreground mt-7 text-sm">{formatAddress()}</p>
+            <p className="text-muted-foreground mt-7 text-sm">
+              {multiBranch
+                ? `${branches.length} showrooms — each with its own address, opening hours and Google Maps location.`
+                : formatAddress()}
+            </p>
           </div>
 
           <MediaPlaceholder
