@@ -1,6 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Clock, MapPin, MessageCircle, Navigation, Phone } from "lucide-react";
+import {
+  ArrowRight,
+  Clock,
+  ExternalLink,
+  Map,
+  MapPin,
+  MessageCircle,
+  Navigation,
+  Phone,
+} from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,7 +17,9 @@ import { MediaPlaceholder } from "@/components/common/media-placeholder";
 import { cn } from "@/lib/utils";
 import { DEALERSHIP_NAME } from "@/lib/brand";
 import {
+  branchDirectionsUrl,
   branchLocality,
+  branchMapUrl,
   branchTelUrl,
   branchWhatsappUrl,
   formatBranchAddress,
@@ -49,7 +60,12 @@ export function BranchCard({
   const addressPending = isBranchPlaceholder("address", branch);
   const phonePending = isBranchPlaceholder("phone", branch);
   const hoursPending = isBranchPlaceholder("openingHours", branch);
-  const directionsPending = isBranchPlaceholder("directionsUrl", branch);
+  // Both map links are derived from this branch's own coordinates or address,
+  // so a card never carries a hard-coded location. Null means the branch has
+  // neither yet, and the map row and Directions button say so instead of
+  // pointing at a generic maps page.
+  const mapUrl = branchMapUrl(branch);
+  const directionsUrl = branchDirectionsUrl(branch);
   const image = branch.branchImages[0];
 
   return (
@@ -151,6 +167,28 @@ export function BranchCard({
               )}
             </dd>
           </div>
+
+          <div className="flex gap-3">
+            <dt className="sr-only">Google Maps location</dt>
+            <Map aria-hidden className="text-brand-600 mt-0.5 size-4 shrink-0" />
+            <dd>
+              {mapUrl ? (
+                <a
+                  href={mapUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-brand-700 dark:text-brand-400 hover:text-brand-800 dark:hover:text-brand-300 inline-flex items-center gap-1 font-medium transition-colors"
+                >
+                  View on Google Maps
+                  <ExternalLink aria-hidden className="size-3.5" />
+                </a>
+              ) : (
+                <span className="text-muted-foreground">
+                  Map location to be confirmed
+                </span>
+              )}
+            </dd>
+          </div>
         </dl>
 
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -166,12 +204,19 @@ export function BranchCard({
         </div>
 
         <div className="mt-3 grid grid-cols-3 gap-2">
-          <Button asChild variant="ghost" size="sm" disabled={phonePending}>
-            <a href={branchTelUrl(branch)} aria-label={`Call ${branch.branchName}`}>
+          {phonePending ? (
+            <Button variant="ghost" size="sm" disabled>
               <Phone aria-hidden />
               Call
-            </a>
-          </Button>
+            </Button>
+          ) : (
+            <Button asChild variant="ghost" size="sm">
+              <a href={branchTelUrl(branch)} aria-label={`Call ${branch.branchName}`}>
+                <Phone aria-hidden />
+                Call
+              </a>
+            </Button>
+          )}
           <Button asChild variant="ghost" size="sm">
             <a
               href={branchWhatsappUrl(
@@ -186,17 +231,26 @@ export function BranchCard({
               WhatsApp
             </a>
           </Button>
-          <Button asChild variant="ghost" size="sm" disabled={directionsPending}>
-            <a
-              href={branch.directionsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Get directions to ${branch.branchName}`}
-            >
+          {directionsUrl ? (
+            <Button asChild variant="ghost" size="sm">
+              <a
+                href={directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Get directions to ${branch.branchName} on Google Maps`}
+              >
+                <Navigation aria-hidden />
+                Directions
+              </a>
+            </Button>
+          ) : (
+            /* A disabled anchor is still clickable, so an unconfirmed location
+               renders a real disabled button rather than a link to nowhere. */
+            <Button variant="ghost" size="sm" disabled>
               <Navigation aria-hidden />
               Directions
-            </a>
-          </Button>
+            </Button>
+          )}
         </div>
       </div>
     </article>

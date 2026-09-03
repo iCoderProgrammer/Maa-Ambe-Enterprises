@@ -7,7 +7,9 @@ import { SectionHeading } from "@/components/common/section-heading";
 import { Breadcrumbs, type Crumb } from "@/components/common/breadcrumbs";
 import { JsonLd } from "@/components/seo/json-ld";
 import { ContactForm } from "@/components/forms/contact-form";
-import { breadcrumbJsonLd, localBusinessSchema } from "@/lib/seo";
+import { BranchCard } from "@/components/branches/branch-card";
+import { getBranches, getPrimaryBranch, hasMultipleBranches } from "@/lib/branches";
+import { branchesSchema, breadcrumbJsonLd, localBusinessSchema } from "@/lib/seo";
 import {
   dealership,
   formatAddress,
@@ -44,11 +46,20 @@ const shortDay = (day: string) => day.slice(0, 3);
 
 export default function ContactPage() {
   const hours = groupedOpeningHours();
+  // The aside describes the primary showroom. With more than one, every branch
+  // gets its own card below — same centralized data, same map CTAs as the
+  // showroom page, so a visitor is never given one address for three places.
+  const multiBranch = hasMultipleBranches();
+  const branches = getBranches();
 
   return (
     <>
       <JsonLd data={breadcrumbJsonLd(crumbs)} />
-      <JsonLd data={localBusinessSchema()} />
+      {multiBranch ? (
+        branchesSchema().map((schema) => <JsonLd key={schema["@id"]} data={schema} />)
+      ) : (
+        <JsonLd data={localBusinessSchema()} />
+      )}
       <Breadcrumbs items={crumbs} />
 
       <Section>
@@ -66,6 +77,11 @@ export default function ContactPage() {
             <h2 className="font-display text-base font-semibold">
               {dealership.dealershipName}
             </h2>
+            {multiBranch ? (
+              <p className="text-muted-foreground mt-1 text-xs">
+                {getPrimaryBranch().branchName} — see every location below.
+              </p>
+            ) : null}
 
             <dl className="mt-6 space-y-5 text-sm">
               <div className="flex gap-3">
@@ -118,16 +134,23 @@ export default function ContactPage() {
             </dl>
 
             <div className="mt-7 space-y-3">
-              <Button asChild size="lg" block>
-                <a
-                  href={dealership.directionsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+              {dealership.directionsUrl ? (
+                <Button asChild size="lg" block>
+                  <a
+                    href={dealership.directionsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Navigation aria-hidden />
+                    Get Directions
+                  </a>
+                </Button>
+              ) : (
+                <Button size="lg" block disabled>
                   <Navigation aria-hidden />
                   Get Directions
-                </a>
-              </Button>
+                </Button>
+              )}
               <Button asChild variant="outline" size="lg" block>
                 <a
                   href={whatsappUrl(`Hi ${dealership.dealershipName}, I have a question.`)}
@@ -142,6 +165,23 @@ export default function ContactPage() {
           </aside>
         </div>
       </Section>
+
+      {multiBranch ? (
+        <Section tone="muted" id="showrooms">
+          <SectionHeading
+            eyebrow="Our showrooms"
+            title="Contact a showroom directly"
+            description="Every location has its own number, WhatsApp and Google Maps pin. Reach whichever one is closest to you."
+          />
+          <ul className="mt-12 grid list-none gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {branches.map((branch) => (
+              <li key={branch.branchId} className="flex">
+                <BranchCard branch={branch} className="w-full" />
+              </li>
+            ))}
+          </ul>
+        </Section>
+      ) : null}
     </>
   );
 }

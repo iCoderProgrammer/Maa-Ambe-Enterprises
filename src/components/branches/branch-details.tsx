@@ -3,7 +3,9 @@ import {
   ArrowRight,
   BadgeCheck,
   Clock,
+  ExternalLink,
   Mail,
+  Map,
   MapPin,
   MessageCircle,
   Navigation,
@@ -15,6 +17,9 @@ import { PendingData } from "@/components/common/pending-data";
 import { MediaPlaceholder } from "@/components/common/media-placeholder";
 import { DEALERSHIP_NAME, brandedModel } from "@/lib/brand";
 import {
+  branchDirectionsUrl,
+  branchMapEmbedUrl,
+  branchMapUrl,
   branchTelUrl,
   branchWhatsappUrl,
   formatBranchAddress,
@@ -42,6 +47,13 @@ export function BranchDetails({ view }: { view: BranchView }) {
   const emailPending = isBranchPlaceholder("email", branch);
   const hoursPending = isBranchPlaceholder("openingHours", branch);
   const hours = groupedBranchHours(branch);
+
+  // Map, directions and embed all follow the selected branch, because all three
+  // are derived from that branch's record — selecting a showroom cannot leave
+  // the map pointing at a different one.
+  const mapUrl = branchMapUrl(branch);
+  const directionsUrl = branchDirectionsUrl(branch);
+  const mapEmbedUrl = branchMapEmbedUrl(branch);
 
   return (
     <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-14">
@@ -139,31 +151,76 @@ export function BranchDetails({ view }: { view: BranchView }) {
               WhatsApp
             </a>
           </Button>
-          <Button asChild variant="outline" size="lg">
-            <a href={branch.directionsUrl} target="_blank" rel="noopener noreferrer">
+          {directionsUrl ? (
+            <Button asChild variant="outline" size="lg">
+              <a
+                href={directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Get directions to ${branch.branchName} on Google Maps`}
+              >
+                <Navigation aria-hidden />
+                Get Directions
+              </a>
+            </Button>
+          ) : (
+            <Button variant="outline" size="lg" disabled>
               <Navigation aria-hidden />
               Get Directions
-            </a>
-          </Button>
+            </Button>
+          )}
+
+          {mapUrl ? (
+            <Button asChild variant="outline" size="lg">
+              <a
+                href={mapUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`View ${branch.branchName} on Google Maps`}
+              >
+                <Map aria-hidden />
+                View on Google Maps
+              </a>
+            </Button>
+          ) : null}
         </div>
       </div>
 
       <div className="space-y-8">
-        {branch.mapEmbedUrl ? (
-          <iframe
-            src={branch.mapEmbedUrl}
-            title={`Map showing the location of ${branch.branchName}`}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            className="border-hairline aspect-4/3 w-full rounded-2xl border"
-          />
-        ) : (
-          <MediaPlaceholder
-            label={`${branch.branchName} — map`}
-            ratio="aspect-4/3"
-            className="rounded-2xl"
-          />
-        )}
+        <div>
+          {mapEmbedUrl ? (
+            <iframe
+              src={mapEmbedUrl}
+              title={`Google Maps showing the location of ${branch.branchName}`}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="border-hairline aspect-4/3 w-full rounded-2xl border"
+            />
+          ) : (
+            <MediaPlaceholder
+              label={`${branch.branchName} — map location to be confirmed`}
+              ratio="aspect-4/3"
+              className="rounded-2xl"
+            />
+          )}
+
+          {mapUrl ? (
+            <a
+              href={mapUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-foreground mt-3 inline-flex items-center gap-1.5 text-xs transition-colors"
+            >
+              Open {branch.branchName} in Google Maps
+              <ExternalLink aria-hidden className="size-3.5" />
+            </a>
+          ) : (
+            <p className="text-muted-foreground mt-3 text-xs">
+              The Google Maps location for this showroom is being confirmed. Call or
+              message us and we will guide you in.
+            </p>
+          )}
+        </div>
 
         <div>
           <h4 className="text-eyebrow text-muted-foreground uppercase">

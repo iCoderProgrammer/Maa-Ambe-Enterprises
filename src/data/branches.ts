@@ -89,11 +89,23 @@ export interface Branch {
 
   latitude: number;
   longitude: number;
-  /** Google Maps place link. */
-  mapUrl: string;
-  /** Embeddable map URL, e.g. a Google Maps `/maps/embed` link. */
+
+  /*
+   * Google Maps. All three are OVERRIDES: null means "derive from this
+   * branch's coordinates, or failing that its address", which is what
+   * `branchMapUrl`, `branchMapEmbedUrl` and `branchDirectionsUrl` at the
+   * bottom of this file do. Set one only to point at something better than a
+   * derived link — a Google Business place link, or an embed URL copied from
+   * Google's own share dialog. Never park a generic `https://maps.google.com`
+   * here: that is not a location, and it would beat the derived link.
+   */
+
+  /** Google Maps place link, or null to derive one. */
+  mapUrl: string | null;
+  /** Embeddable map URL, e.g. a Google Maps `/maps/embed` link, or null to derive. */
   mapEmbedUrl: string | null;
-  directionsUrl: string;
+  /** Turn-by-turn link, or null to derive one. */
+  directionsUrl: string | null;
 
   /** Photography of this branch. Empty until real images are supplied. */
   branchImages: ShowroomImage[];
@@ -125,14 +137,22 @@ export interface Branch {
  * Every branch, unordered. Read through `getBranches()` rather than directly so
  * ordering and status filtering stay in one place.
  *
- * Today this holds a single, entirely placeholder showroom: the real addresses
- * have not been supplied. It is deliberately NOT padded with invented second
- * and third locations — a fabricated branch would put a customer in a car to an
- * address that does not exist. Add real ones from `branchTemplate`.
+ * Three showrooms are registered. Every location-bearing field on all three is
+ * still a PLACEHOLDER — the real addresses, numbers and map links have not been
+ * supplied — and each branch says so in its `placeholders` array, which is why
+ * the cards read "Full address is being finalised" rather than printing an
+ * invented street. Nothing here is a real address, and no map link points
+ * anywhere: a fabricated location would put a customer in a car to a place that
+ * does not exist.
+ *
+ * To make a branch real, replace its fields and delete the matching entries
+ * from its `placeholders`. The address, contact block, structured data, map
+ * embed and both map CTAs switch on together, per branch, with no component
+ * change. A fourth showroom is `branchTemplate` copied into this array.
  */
 export const branches: Branch[] = [
   {
-    branchId: "main",
+    branchId: "branch-1",
     branchName: "Main Showroom",
     slug: "main-showroom",
     tagline: "Full Lectrix EV range, test rides and service under one roof.",
@@ -163,11 +183,16 @@ export const branches: Branch[] = [
       { day: "Sunday", opens: "10:30", closes: "17:00" },
     ],
 
+    // Google Maps links switch on with the location: `branchMapUrl`,
+    // `branchDirectionsUrl` and `branchMapEmbedUrl` build them from the geo
+    // point below, falling back to the postal address. Both are placeholders,
+    // so this branch currently has no map link at all. Set `mapUrl` only to
+    // override the derived link with the branch's own Google Business listing.
     latitude: 0,
     longitude: 0,
-    mapUrl: "https://maps.google.com",
+    mapUrl: null,
     mapEmbedUrl: null,
-    directionsUrl: "https://maps.google.com",
+    directionsUrl: null,
 
     // Placeholder artwork from `scripts/generate-placeholder-images.py`, each
     // carrying a visible PLACEHOLDER badge. Replace with real photographs of
@@ -214,9 +239,188 @@ export const branches: Branch[] = [
       "email",
       "openingHours",
       "geo",
-      "mapUrl",
-      "mapEmbedUrl",
-      "directionsUrl",
+      "branchImages",
+    ],
+  },
+  {
+    branchId: "branch-2",
+    branchName: "Second Showroom",
+    slug: "second-showroom",
+    tagline: "Placeholder second location — sales, test rides and after-sales support.",
+
+    address: {
+      line1: "Showroom address line 1",
+      line2: "Showroom address line 2",
+      locality: "Locality",
+      city: "City",
+      state: "State",
+      pincode: "000000",
+      country: "India",
+      countryCode: "IN",
+    },
+
+    phone: "+919999999998",
+    phoneDisplay: "+91 99999 99998",
+    whatsapp: "919999999998",
+    email: "branch2@example.com",
+
+    openingHours: [
+      { day: "Monday", opens: "09:30", closes: "19:30" },
+      { day: "Tuesday", opens: "09:30", closes: "19:30" },
+      { day: "Wednesday", opens: "09:30", closes: "19:30" },
+      { day: "Thursday", opens: "09:30", closes: "19:30" },
+      { day: "Friday", opens: "09:30", closes: "19:30" },
+      { day: "Saturday", opens: "09:30", closes: "19:30" },
+      { day: "Sunday", opens: "10:30", closes: "17:00" },
+    ],
+
+    // Google Maps links switch on with the location: `branchMapUrl`,
+    // `branchDirectionsUrl` and `branchMapEmbedUrl` build them from the geo
+    // point below, falling back to the postal address. Both are placeholders,
+    // so this branch currently has no map link at all. Set `mapUrl` only to
+    // override the derived link with the branch's own Google Business listing.
+    latitude: 0,
+    longitude: 0,
+    mapUrl: null,
+    mapEmbedUrl: null,
+    directionsUrl: null,
+
+    // Placeholder artwork from `scripts/generate-placeholder-images.py`, each
+    // carrying a visible PLACEHOLDER badge. Replace with real photographs of
+    // this showroom at the same paths.
+    branchImages: [
+      {
+        src: "/images/branches/exterior.png",
+        alt: "Placeholder photograph of the showroom exterior",
+        width: 1600,
+        height: 1200,
+      },
+      {
+        src: "/images/branches/floor.png",
+        alt: "Placeholder photograph of the display floor",
+        width: 1600,
+        height: 1200,
+      },
+      {
+        src: "/images/branches/delivery.png",
+        alt: "Placeholder photograph of the delivery bay",
+        width: 1600,
+        height: 1200,
+      },
+      {
+        src: "/images/branches/workshop.png",
+        alt: "Placeholder photograph of the service workshop",
+        width: 1600,
+        height: 1200,
+      },
+    ],
+
+    availableModels: "all",
+    services: "all",
+
+    featured: false,
+    status: "open",
+    displayOrder: 2,
+
+    placeholders: [
+      "branchName",
+      "address",
+      "phone",
+      "whatsapp",
+      "email",
+      "openingHours",
+      "geo",
+      "branchImages",
+    ],
+  },
+  {
+    branchId: "branch-3",
+    branchName: "Third Showroom",
+    slug: "third-showroom",
+    tagline: "Placeholder third location — sales, test rides and after-sales support.",
+
+    address: {
+      line1: "Showroom address line 1",
+      line2: "Showroom address line 2",
+      locality: "Locality",
+      city: "City",
+      state: "State",
+      pincode: "000000",
+      country: "India",
+      countryCode: "IN",
+    },
+
+    phone: "+919999999997",
+    phoneDisplay: "+91 99999 99997",
+    whatsapp: "919999999997",
+    email: "branch3@example.com",
+
+    openingHours: [
+      { day: "Monday", opens: "09:30", closes: "19:30" },
+      { day: "Tuesday", opens: "09:30", closes: "19:30" },
+      { day: "Wednesday", opens: "09:30", closes: "19:30" },
+      { day: "Thursday", opens: "09:30", closes: "19:30" },
+      { day: "Friday", opens: "09:30", closes: "19:30" },
+      { day: "Saturday", opens: "09:30", closes: "19:30" },
+      { day: "Sunday", opens: "10:30", closes: "17:00" },
+    ],
+
+    // Google Maps links switch on with the location: `branchMapUrl`,
+    // `branchDirectionsUrl` and `branchMapEmbedUrl` build them from the geo
+    // point below, falling back to the postal address. Both are placeholders,
+    // so this branch currently has no map link at all. Set `mapUrl` only to
+    // override the derived link with the branch's own Google Business listing.
+    latitude: 0,
+    longitude: 0,
+    mapUrl: null,
+    mapEmbedUrl: null,
+    directionsUrl: null,
+
+    // Placeholder artwork from `scripts/generate-placeholder-images.py`, each
+    // carrying a visible PLACEHOLDER badge. Replace with real photographs of
+    // this showroom at the same paths.
+    branchImages: [
+      {
+        src: "/images/branches/exterior.png",
+        alt: "Placeholder photograph of the showroom exterior",
+        width: 1600,
+        height: 1200,
+      },
+      {
+        src: "/images/branches/floor.png",
+        alt: "Placeholder photograph of the display floor",
+        width: 1600,
+        height: 1200,
+      },
+      {
+        src: "/images/branches/delivery.png",
+        alt: "Placeholder photograph of the delivery bay",
+        width: 1600,
+        height: 1200,
+      },
+      {
+        src: "/images/branches/workshop.png",
+        alt: "Placeholder photograph of the service workshop",
+        width: 1600,
+        height: 1200,
+      },
+    ],
+
+    availableModels: "all",
+    services: "all",
+
+    featured: false,
+    status: "open",
+    displayOrder: 3,
+
+    placeholders: [
+      "branchName",
+      "address",
+      "phone",
+      "whatsapp",
+      "email",
+      "openingHours",
+      "geo",
       "branchImages",
     ],
   },
@@ -230,9 +434,9 @@ export const branches: Branch[] = [
  * left in that array is treated by the UI and by structured data as unknown.
  */
 export const branchTemplate: Branch = {
-  branchId: "branch-2",
-  branchName: "Second Showroom",
-  slug: "second-showroom",
+  branchId: "branch-4",
+  branchName: "Fourth Showroom",
+  slug: "fourth-showroom",
   tagline: "One line on what this location is good for.",
 
   address: {
@@ -263,9 +467,9 @@ export const branchTemplate: Branch = {
 
   latitude: 0,
   longitude: 0,
-  mapUrl: "https://maps.google.com",
+  mapUrl: null,
   mapEmbedUrl: null,
-  directionsUrl: "https://maps.google.com",
+  directionsUrl: null,
 
   branchImages: [],
 
@@ -276,7 +480,7 @@ export const branchTemplate: Branch = {
 
   featured: false,
   status: "open",
-  displayOrder: 2,
+  displayOrder: 4,
 
   placeholders: [
     "branchName",
@@ -286,9 +490,6 @@ export const branchTemplate: Branch = {
     "email",
     "openingHours",
     "geo",
-    "mapUrl",
-    "mapEmbedUrl",
-    "directionsUrl",
     "branchImages",
   ],
 };
@@ -382,4 +583,77 @@ export function groupedBranchHours(branch: Branch) {
   }
 
   return groups;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Google Maps                                                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * What a maps app should resolve to reach this branch.
+ *
+ * Coordinates win when the branch has them — they land a customer on the
+ * doorway rather than on a road with a similar name. Failing that the full
+ * postal address, prefixed with the branch name so the pin is labelled. A
+ * branch with neither returns null, and every map link and embed below then
+ * returns null too: sending someone to a generic `maps.google.com`, or
+ * embedding a map of nowhere, is worse than showing that the location is still
+ * being confirmed.
+ */
+function branchMapQuery(branch: Branch): string | null {
+  if (!isBranchPlaceholder("geo", branch)) {
+    return `${branch.latitude},${branch.longitude}`;
+  }
+  if (!isBranchPlaceholder("address", branch)) {
+    return `${branch.branchName}, ${formatBranchAddress(branch)}`;
+  }
+  return null;
+}
+
+/**
+ * "View on Google Maps" target for a branch.
+ *
+ * A branch may supply its own `mapUrl` — a Google Business place link is more
+ * precise than any query and carries the listing's photos and reviews. When it
+ * has not, one is built from the branch's own coordinates or address, so a
+ * location never has to be hand-pasted into a component.
+ */
+export function branchMapUrl(branch: Branch): string | null {
+  if (branch.mapUrl) return branch.mapUrl;
+
+  const query = branchMapQuery(branch);
+  return query
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`
+    : null;
+}
+
+/** "Get Directions" target — turn-by-turn navigation to this branch. */
+export function branchDirectionsUrl(branch: Branch): string | null {
+  if (branch.directionsUrl) return branch.directionsUrl;
+
+  const query = branchMapQuery(branch);
+  return query
+    ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(query)}`
+    : null;
+}
+
+/**
+ * Embeddable map for a branch.
+ *
+ * The derived form uses Google's keyless `output=embed` endpoint, so a branch
+ * gets a working preview from its address alone; supplying a `/maps/embed`
+ * link from Google's own share dialog overrides it.
+ */
+export function branchMapEmbedUrl(branch: Branch): string | null {
+  if (branch.mapEmbedUrl) return branch.mapEmbedUrl;
+
+  const query = branchMapQuery(branch);
+  return query
+    ? `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`
+    : null;
+}
+
+/** True when this branch can be pointed at on a map at all. */
+export function hasBranchMapLocation(branch: Branch): boolean {
+  return branchMapQuery(branch) !== null;
 }
