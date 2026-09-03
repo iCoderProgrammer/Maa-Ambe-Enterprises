@@ -114,7 +114,11 @@ export function Footer() {
           </ul>
         </div>
 
-        <p className="text-on-inverse-muted/70 mt-6 text-[0.6875rem] leading-relaxed">
+        {/* Full `on-inverse-muted`, not `/70`. Faded to 70% this line measured
+            3.87:1 against the footer — under the 4.5:1 AA floor, and it is the
+            smallest type on the site. Legal text is exactly the text a reader
+            must be able to read. */}
+        <p className="text-on-inverse-muted mt-6 text-[0.6875rem] leading-relaxed">
           Lectrix EV is a registered trademark of its respective owner. Specifications,
           prices, colours and features shown on this website are indicative and may vary
           by variant, city and applicable offers. Please confirm current details with the

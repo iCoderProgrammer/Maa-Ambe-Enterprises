@@ -110,7 +110,11 @@ export const nduro: Product = {
     },
   ],
   images: {
-    card: "/images/products/nduro-card.png",
+    // A real photograph rather than the generated stand-in every other model
+    // still carries: the lineup grid puts these cards side by side, and one
+    // genuine ride shot next to four placeholders is the honest state of the
+    // asset set — the models still waiting on photography say so on the card.
+    card: "/images/nduro/nduro-performance-01.webp",
     hero: "/images/nduro/nduro.webp",
     og: "/images/products/nduro-og.png",
   },

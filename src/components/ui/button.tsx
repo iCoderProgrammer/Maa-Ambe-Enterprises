@@ -13,9 +13,14 @@ const buttonVariants = cva(
         /** Highest-intent conversion CTA. Use sparingly — one per view. */
         brand:
           "bg-brand text-brand-foreground hover:bg-brand-400 hover:shadow-brand",
-        /** For use on dark (`tone="inverse"`) surfaces. */
+        /**
+         * Solid button for dark (`tone="inverse"`) surfaces — light plate,
+         * ink label. It used to be `bg-surface-inverse`, which on the dark
+         * section it is named for painted the button the same colour as the
+         * section behind it: a solid CTA that read as an outline-less ghost.
+         */
         inverse:
-          "bg-surface-inverse text-on-inverse hover:bg-surface-inverse/85",
+          "bg-on-inverse text-surface-inverse hover:bg-on-inverse/88",
         outline:
           "border-border bg-background text-foreground hover:border-foreground/25 hover:bg-muted aria-expanded:bg-muted dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         /** Outline sibling for dark surfaces. */
@@ -33,10 +38,15 @@ const buttonVariants = cva(
         xs: "h-7 gap-1 rounded-md px-2 text-xs [&_svg:not([class*='size-'])]:size-3",
         sm: "h-8 gap-1.5 rounded-md px-3 text-[0.8125rem] [&_svg:not([class*='size-'])]:size-3.5",
         default: "h-10 gap-2 px-4 text-sm",
-        /** Primary page CTA. */
-        lg: "h-12 gap-2 rounded-xl px-6 text-[0.9375rem] [&_svg:not([class*='size-'])]:size-4.5",
+        /**
+         * Primary page CTA. The hover lift is on `lg` and `xl` only: at those
+         * sizes a button is a destination a person aims at, and a half-pixel
+         * rise reads as the target answering. On a 28px icon button in a
+         * toolbar the same movement is just a twitch.
+         */
+        lg: "h-12 gap-2 rounded-xl px-5 xs:px-6 text-[0.9375rem] hover:not-disabled:-translate-y-0.5 [&_svg:not([class*='size-'])]:size-4.5",
         /** Hero CTA only. */
-        xl: "h-14 gap-2.5 rounded-xl px-8 text-base [&_svg:not([class*='size-'])]:size-5",
+        xl: "h-14 gap-2.5 rounded-xl px-6 xs:px-8 text-base hover:not-disabled:-translate-y-0.5 [&_svg:not([class*='size-'])]:size-5",
         icon: "size-10",
         "icon-xs": "size-7 rounded-md [&_svg:not([class*='size-'])]:size-3",
         "icon-sm": "size-8 rounded-md [&_svg:not([class*='size-'])]:size-3.5",

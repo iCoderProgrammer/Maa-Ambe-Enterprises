@@ -4,6 +4,7 @@ import { Inter, Sora } from "next/font/google";
 import "./globals.css";
 
 import { MotionProvider } from "@/components/common/motion-provider";
+import { SmoothScrollProvider } from "@/components/motion/smooth-scroll-provider";
 import { SkipLink } from "@/components/common/skip-link";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
@@ -75,16 +76,29 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="pb-action-bar flex min-h-full flex-col">
-        <MotionProvider>
-          <SkipLink />
-          <Header />
-          <main id="main-content" className="flex-1">
-            {children}
-          </main>
-          <Footer />
-          <MobileActionBar />
-          <WhatsAppFab />
-        </MotionProvider>
+        {/*
+          Two providers, two jobs, and neither of them makes the tree below
+          them a client tree — `children` arrives as an already-rendered
+          server payload.
+
+          `MotionProvider` configures Framer for the entrance reveals.
+          `SmoothScrollProvider` runs Lenis and keeps GSAP's ScrollTrigger on
+          the same frame as it. Lenis is outermost because it owns the page's
+          scroll position, which is the thing every scroll-linked animation
+          inside reads.
+        */}
+        <SmoothScrollProvider>
+          <MotionProvider>
+            <SkipLink />
+            <Header />
+            <main id="main-content" className="flex-1">
+              {children}
+            </main>
+            <Footer />
+            <MobileActionBar />
+            <WhatsAppFab />
+          </MotionProvider>
+        </SmoothScrollProvider>
       </body>
     </html>
   );

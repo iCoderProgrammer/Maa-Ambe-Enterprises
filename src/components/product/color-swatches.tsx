@@ -66,10 +66,10 @@ export function ColorSwatches() {
                   aria-label={color.name}
                   title={color.name}
                   className={cn(
-                    "block size-11 rounded-full border-2 transition-transform",
+                    "block size-11 rounded-full border-2 transition-[transform,border-color,box-shadow] duration-200 ease-(--ease-out-brand)",
                     isSelected
-                      ? "border-foreground scale-105"
-                      : "border-border hover:scale-105"
+                      ? "border-foreground ring-brand-500/35 scale-110 ring-2 ring-offset-2 ring-offset-background"
+                      : "border-border hover:scale-105 hover:border-foreground/40"
                   )}
                 >
                   <span

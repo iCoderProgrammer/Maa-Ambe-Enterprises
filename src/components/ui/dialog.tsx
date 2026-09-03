@@ -60,6 +60,12 @@ function DialogContent({
       <DialogOverlay />
       <DialogPrimitive.Content
         data-slot="dialog-content"
+        /* Lenis owns the page scroll and listens on the window. Without this
+           attribute it also eats wheel events that land inside an overlay, so
+           a drawer or a dialog taller than the viewport could not be scrolled.
+           Lenis honours the attribute natively and lets the browser handle
+           these subtrees. */
+        data-lenis-prevent
         className={cn(
           "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className

@@ -23,7 +23,14 @@ export function Container({
 }: ContainerProps) {
   return (
     <div
-      className={cn("mx-auto w-full px-5 sm:px-6 lg:px-10", widths[width], className)}
+      className={cn(
+        // 16px below 360px. A 320px phone has 280px of content at `px-5`, and
+        // that is where wide single-line controls — a full-width CTA inside a
+        // padded panel — start forcing the page to scroll sideways.
+        "mx-auto w-full px-4 xs:px-5 sm:px-6 lg:px-10",
+        widths[width],
+        className
+      )}
       {...props}
     />
   );

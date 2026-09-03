@@ -79,7 +79,7 @@ export default function WarrantyPage() {
             title="What your cover actually means"
             description="Every new Lectrix EV scooter carries a manufacturer warranty on the vehicle and a separate one on the battery. This page explains how those work in general. The durations and conditions that apply to your scooter come from the manufacturer's warranty document, and we go through it with you."
           />
-          <div className="border-hairline flex flex-col justify-center gap-4 rounded-2xl border p-6 sm:p-8">
+          <div className="border-hairline flex flex-col justify-center gap-4 rounded-2xl border p-5 sm:p-8">
             <FileText aria-hidden className="text-brand-600 dark:text-brand-400 size-6" />
             <p className="text-sm leading-relaxed text-pretty">
               <strong className="font-semibold">
@@ -92,7 +92,7 @@ export default function WarrantyPage() {
             <Button asChild variant="brand" size="lg">
               <a href={telUrl()}>
                 <Phone aria-hidden />
-                Ask for your warranty terms
+                Ask for your terms
               </a>
             </Button>
           </div>
