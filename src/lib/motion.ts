@@ -34,6 +34,19 @@ export const fadeIn: Variants = {
   visible: { opacity: 1, transition: transitions.slow },
 };
 
+/**
+ * Type reveal: a line rises out from behind its own clipping wrapper.
+ *
+ * Only meaningful inside an `overflow-hidden` parent that is exactly one line
+ * tall — `MaskLine` in `components/common/motion.tsx` supplies both. The 108%
+ * offset carries descenders clear of the mask before the line starts moving,
+ * so a "g" or a "y" is never seen poking below the crop.
+ */
+export const maskUp: Variants = {
+  hidden: { opacity: 0, y: "108%" },
+  visible: { opacity: 1, y: "0%", transition: transitions.slower },
+};
+
 /** Hero media: settles in with a slight scale-down, never a zoom-bomb. */
 export const mediaReveal: Variants = {
   hidden: { opacity: 0, scale: 1.04 },

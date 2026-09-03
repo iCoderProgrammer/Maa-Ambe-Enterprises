@@ -33,15 +33,27 @@ export function Section({
   containerWidth,
   ...props
 }: SectionProps) {
+  const isInverse = tone === "inverse";
+
   return (
     <section
       className={cn(
         compact ? "section-y-sm" : "section-y",
         tones[tone],
+        // An ink section is a moment, not a background — the hero, the
+        // technology section, the closing call to action. The glow gives all
+        // of them the same lighting as the hero panel so they read as one
+        // recurring surface rather than three separate black boxes. `isolate`
+        // keeps the negative-z layer above the section's own background and
+        // out of the page's stacking context.
+        isInverse && "relative isolate overflow-hidden",
         className
       )}
       {...props}
     >
+      {isInverse ? (
+        <div aria-hidden className="inverse-glow absolute inset-0 -z-10" />
+      ) : null}
       {bleed ? children : <Container width={containerWidth}>{children}</Container>}
     </section>
   );

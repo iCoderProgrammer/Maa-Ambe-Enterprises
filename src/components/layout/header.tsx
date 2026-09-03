@@ -29,7 +29,7 @@ import { primaryNav } from "@/config/navigation";
 export function Header() {
   return (
     <HeaderChrome>
-      <Container className="flex h-16 items-center justify-between gap-6 lg:h-20">
+      <Container className="flex h-16 items-center justify-between gap-3 sm:gap-6 lg:h-20">
         <Logo />
 
         <nav aria-label="Main" className="hidden min-w-0 xl:block">
@@ -38,7 +38,7 @@ export function Header() {
               <li key={item.href}>
                 <NavLink
                   href={item.href}
-                  className="text-muted-foreground hover:text-foreground data-active:text-foreground relative rounded-md px-2 py-2 text-[0.8125rem] font-medium whitespace-nowrap transition-colors after:absolute after:inset-x-2 after:-bottom-0.5 after:h-px after:scale-x-0 after:bg-brand-600 after:transition-transform after:duration-300 after:ease-(--ease-out-brand) data-active:after:scale-x-100"
+                  className="text-muted-foreground hover:text-foreground data-active:text-foreground relative rounded-md px-2 py-2 text-[0.8125rem] font-medium whitespace-nowrap transition-colors after:absolute after:inset-x-2 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-brand-600 after:transition-transform after:duration-300 after:ease-(--ease-out-brand) hover:after:scale-x-100 data-active:after:scale-x-100"
                 >
                   {item.label}
                 </NavLink>

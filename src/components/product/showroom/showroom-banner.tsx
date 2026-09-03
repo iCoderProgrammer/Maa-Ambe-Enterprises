@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import { cn } from "@/lib/utils";
+import { Parallax } from "@/components/motion/parallax";
 import type { ShowroomBanner as Banner } from "@/types/showroom";
 import { ShowroomStat } from "@/components/product/showroom/showroom-stat";
 
@@ -54,28 +55,41 @@ export function ShowroomBannerBlock({ block }: { block: Banner }) {
           ) : null}
         </figcaption>
 
-        <Image
-          src={block.media.src}
-          alt={block.media.alt}
-          width={block.media.width}
-          height={block.media.height}
-          sizes="(min-width: 1024px) 50vw, 100vw"
-          className="aspect-4/3 w-full object-cover lg:aspect-square"
-        />
+        <Parallax speed={8} className="aspect-4/3 w-full lg:aspect-square">
+          <Image
+            src={block.media.src}
+            alt={block.media.alt}
+            width={block.media.width}
+            height={block.media.height}
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            className="h-full w-full object-cover"
+          />
+        </Parallax>
       </figure>
     );
   }
 
   return (
     <figure className="bg-surface-muted relative isolate overflow-hidden rounded-2xl sm:rounded-3xl">
-      <Image
-        src={block.media.src}
-        alt={block.media.alt}
-        width={block.media.width}
-        height={block.media.height}
-        sizes="(min-width: 1280px) 1200px, 100vw"
-        className="aspect-4/5 w-full object-cover sm:aspect-16/10 lg:aspect-16/9"
-      />
+      {/*
+        The frame holds the aspect ratio and the artwork moves inside it, so
+        the panel's height is fixed whatever the parallax is doing — a banner
+        that changed height as you scrolled past would drag every section below
+        it with it.
+      */}
+      <Parallax
+        speed={9}
+        className="aspect-4/5 w-full sm:aspect-16/10 lg:aspect-16/9"
+      >
+        <Image
+          src={block.media.src}
+          alt={block.media.alt}
+          width={block.media.width}
+          height={block.media.height}
+          sizes="(min-width: 1280px) 1200px, 100vw"
+          className="h-full w-full object-cover"
+        />
+      </Parallax>
 
       {/* Bottom scrim on narrow screens, side scrim once there is room beside
           the subject. Decorative: the copy below carries the meaning. */}

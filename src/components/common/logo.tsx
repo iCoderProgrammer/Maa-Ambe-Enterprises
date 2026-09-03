@@ -41,7 +41,7 @@ export function Logo({
   const mark = (
     <span
       className={cn(
-        "inline-flex items-center gap-2.5",
+        "inline-flex items-center gap-2 xs:gap-2.5",
         inverse ? "text-on-inverse" : "text-foreground",
         className
       )}
@@ -49,7 +49,7 @@ export function Logo({
     >
       <span
         aria-hidden
-        className="bg-foreground text-background inline-flex size-8 shrink-0 items-center justify-center rounded-[0.55rem]"
+        className="bg-foreground text-background inline-flex size-7 shrink-0 items-center justify-center rounded-[0.55rem] xs:size-8"
       >
         <svg viewBox="0 0 24 24" className="size-4.5" fill="none">
           <path
@@ -60,13 +60,16 @@ export function Logo({
       </span>
 
       <span className="flex min-w-0 flex-col leading-none">
-        <span className="font-display text-[0.9375rem] font-semibold tracking-tight whitespace-nowrap uppercase">
+        {/* The business name never truncates and never wraps — it is the site's
+            identity. Below 360px it steps down a size instead, which is what
+            keeps the header row inside a 320px viewport. */}
+        <span className="font-display text-[0.8125rem] font-semibold tracking-tight whitespace-nowrap uppercase xs:text-[0.9375rem]">
           {DEALERSHIP_NAME}
         </span>
         {showBrandLine ? (
           <span
             className={cn(
-              "mt-1 text-[0.625rem] font-medium tracking-[0.06em] whitespace-nowrap uppercase",
+              "mt-1 text-[0.5625rem] font-medium tracking-[0.06em] whitespace-nowrap uppercase xs:text-[0.625rem]",
               inverse ? "text-on-inverse-muted" : "text-muted-foreground"
             )}
           >

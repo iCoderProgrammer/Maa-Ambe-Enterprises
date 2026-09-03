@@ -47,7 +47,7 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        "border-hairline group bg-card flex flex-col overflow-hidden rounded-2xl border transition-shadow duration-300 ease-(--ease-out-brand) hover:shadow-lg",
+        "border-hairline group bg-card flex flex-col overflow-hidden rounded-2xl border transition-[box-shadow,transform,border-color] duration-300 ease-(--ease-out-brand) hover:-translate-y-1 hover:border-foreground/15 hover:shadow-lg",
         className
       )}
     >
@@ -60,7 +60,7 @@ export function ProductCard({
             height={480}
             priority={priority}
             sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw"
-            className="aspect-4/3 w-full object-cover transition-transform duration-500 ease-(--ease-out-brand) group-hover:scale-[1.03]"
+            className="aspect-4/3 w-full object-cover transition-transform duration-700 ease-(--ease-out-brand) group-hover:scale-[1.04]"
           />
         ) : (
           <MediaPlaceholder

@@ -38,7 +38,11 @@ export function TeamSection({
   const groups = getGroupedTeam();
 
   return (
-    <Section id="team" tone={tone}>
+    /* `scroll-mt` because `/about#team` is linked from the footer of every
+       other page. That is a real navigation, so the ROUTER performs the jump,
+       and a router jump does not wait for `:target` to match — without an
+       explicit margin the heading lands underneath the sticky header. */
+    <Section id="team" tone={tone} className="scroll-mt-24">
       <SectionHeading
         eyebrow="Our team"
         title={`The people behind ${DEALERSHIP_NAME}`}

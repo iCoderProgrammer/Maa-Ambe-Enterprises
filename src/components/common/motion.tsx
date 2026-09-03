@@ -4,7 +4,7 @@ import * as React from "react";
 import { m, type Variants } from "framer-motion";
 
 import { cn } from "@/lib/utils";
-import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
+import { fadeUp, maskUp, staggerContainer, viewportOnce } from "@/lib/motion";
 
 type Element = "div" | "section" | "article" | "li" | "ul" | "ol" | "span";
 
@@ -108,5 +108,33 @@ export function StaggerItem({
     <MotionTag data-motion className={cn(className)} variants={variants} {...props}>
       {children}
     </MotionTag>
+  );
+}
+
+/**
+ * One line of a headline, revealed from behind its own crop.
+ *
+ * A child of `Stagger`, like `StaggerItem` — it *is* a `StaggerItem`, wrapped
+ * in the clipping span the effect needs. Split a headline into these by hand,
+ * one per visual line, and choose the break points yourself: an automatic
+ * split would re-break at every viewport width and reveal half-lines.
+ *
+ * The wrapper's `pb` is not spacing. `overflow: hidden` on a line box crops
+ * descenders, and the padding is what gives the tail of a "y" somewhere to
+ * live; the matching negative margin keeps it out of the layout.
+ */
+export function MaskLine({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <span className="block overflow-hidden pb-[0.14em] -mb-[0.14em]">
+      <StaggerItem as="span" variants={maskUp} className={cn("block", className)}>
+        {children}
+      </StaggerItem>
+    </span>
   );
 }

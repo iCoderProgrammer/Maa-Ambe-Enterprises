@@ -128,6 +128,16 @@
   /* ---------- Motion ---------- */
   --ease-out-brand: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out-brand: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Every `transition-*` utility that does not name its own duration or easing
+     picks these up. Tailwind's stock defaults are 150ms `ease`, which is a
+     different curve from the one the rest of the site moves on — so a hover
+     written as a bare `transition-colors` used to feel subtly unlike a hover
+     written as `duration-200 ease-(--ease-out-brand)`. Setting the defaults
+     here makes the brand curve the floor rather than something each component
+     has to remember to opt into. */
+  --default-transition-duration: 200ms;
+  --default-transition-timing-function: var(--ease-out-brand);
   --animate-marquee: marquee 38s linear infinite;
   --animate-pulse-ring: pulse-ring 2.4s var(--ease-in-out-brand) infinite;
   --animate-scroll-hint: scroll-hint 1.9s var(--ease-in-out-brand) infinite;
@@ -177,7 +187,11 @@
   --accent: oklch(0.948 0.004 258);
   --accent-foreground: oklch(0.191 0.014 258);
 
-  --destructive: oklch(0.577 0.245 27.325);
+  /* 0.577 measured 4.45:1 against `surface-muted` — just under the 4.5:1 AA
+     floor for the required-field marker and inline error text, which are the
+     two places this colour carries meaning. Two points of lightness clears it
+     without changing the hue anyone recognises as "error". */
+  --destructive: oklch(0.555 0.235 27.325);
   --success: oklch(0.523 0.13 152);
 
   --border: oklch(0.897 0.005 258);
@@ -237,6 +251,15 @@
     scroll-behavior: smooth;
   }
 
+  /* Lenis is mounted and animating the scroll itself. Two animators competing
+     for the same property is a visible stutter, so the CSS one steps aside —
+     and steps straight back in for every visitor Lenis skips (reduced motion,
+     no JavaScript), for whom `scroll-behavior: smooth` remains the right
+     answer. See `components/motion/smooth-scroll-provider.tsx`. */
+  html[data-lenis-active] {
+    scroll-behavior: auto;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
     text-rendering: optimizeLegibility;
@@ -274,6 +297,45 @@
 
 @utility section-y-sm {
   padding-block: clamp(2.5rem, 1.75rem + 3.5vw, 4.5rem);
+}
+
+/* The homepage hero's backdrop: one low pool of brand light on the ink panel,
+   plus a cooler wash behind the copy so the headline sits on its own tone.
+   Kept here rather than as an arbitrary Tailwind value because two stacked
+   radial gradients with alpha are unreadable written inline. */
+@utility hero-glow {
+  background:
+    radial-gradient(
+      85% 70% at 72% 96%,
+      oklch(0.523 0.13 152 / 0.28),
+      transparent 58%
+    ),
+    radial-gradient(
+      85% 70% at 8% 0%,
+      oklch(0.259 0.014 258 / 0.85),
+      transparent 68%
+    );
+}
+
+/* Ink sections away from the hero: the same light source, turned down. Weak
+   enough that body copy over it keeps its contrast, present enough that a dark
+   section reads as lit rather than as a black rectangle. */
+@utility inverse-glow {
+  background: radial-gradient(
+    75% 65% at 82% 100%,
+    oklch(0.523 0.13 152 / 0.2),
+    transparent 62%
+  );
+}
+
+/* Light-side counterpart to `hero-glow`: a soft brand halo behind a product
+   frame, strong enough to lift it off the page and far too weak to tint it. */
+@utility product-stage-glow {
+  background: radial-gradient(
+    70% 60% at 50% 65%,
+    oklch(0.717 0.176 150 / 0.14),
+    transparent 70%
+  );
 }
 
 /* Screen-reader-only, with a focusable escape hatch (skip link). */

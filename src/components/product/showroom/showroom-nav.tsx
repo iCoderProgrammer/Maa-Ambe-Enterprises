@@ -3,6 +3,7 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { ScrollProgress } from "@/components/motion/scroll-progress";
 
 export interface ShowroomNavItem {
   id: string;
@@ -146,10 +147,23 @@ export function ShowroomNav({
   return (
     <div
       className={cn(
+        // No `relative` here, however much the absolutely-positioned progress
+        // bar below looks like it needs one: `position: sticky` is already a
+        // positioned value and is the bar's containing block. Adding
+        // `relative` puts two `position` declarations on the same element and
+        // the bar wins — the navigation stops sticking entirely.
         "border-hairline bg-background sticky top-16 z-40 border-b lg:top-20",
         className
       )}
     >
+      {/*
+        A model page is the longest scroll on the site, and the chips above
+        only say WHICH section you are in, not how much of the page is left.
+        The bar sits on this element's own bottom border, so it reads as that
+        border filling rather than as a separate widget.
+      */}
+      <ScrollProgress className="-bottom-px" />
+
       <nav aria-label="Model sections" className="mx-auto w-full max-w-(--container-content)">
         {/*
           The scroll container is the `ul`, not an ancestor: an `overflow`

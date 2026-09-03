@@ -10,6 +10,12 @@ import { cn } from "@/lib/utils";
  *
  * Uses a passive, rAF-throttled scroll listener — cheap enough to keep off the
  * main thread's critical path.
+ *
+ * The threshold is the FIRST pixel, not a comfortable dozen. The homepage's
+ * hero panel is ink and begins at exactly this header's height, so any slack
+ * here is a window in which dark bodywork slides behind transparent, ink-
+ * coloured navigation labels. At zero there is no such window: the moment
+ * anything can be underneath the header, the header has a background.
  */
 export function HeaderChrome({ children }: { children: React.ReactNode }) {
   const [scrolled, setScrolled] = React.useState(false);
@@ -20,7 +26,7 @@ export function HeaderChrome({ children }: { children: React.ReactNode }) {
     const onScroll = () => {
       if (frame) return;
       frame = window.requestAnimationFrame(() => {
-        setScrolled(window.scrollY > 12);
+        setScrolled(window.scrollY > 0);
         frame = 0;
       });
     };

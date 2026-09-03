@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Clock, MapPin, MessageCircle, Navigation, Phone } from "lucide-react";
 
@@ -6,6 +7,8 @@ import { Section } from "@/components/common/section";
 import { SectionHeading } from "@/components/common/section-heading";
 import { MediaPlaceholder } from "@/components/common/media-placeholder";
 import { Reveal } from "@/components/common/motion";
+import { Parallax } from "@/components/motion/parallax";
+import { cn } from "@/lib/utils";
 import { DEALERSHIP_NAME } from "@/lib/brand";
 import {
   dealership,
@@ -15,6 +18,11 @@ import {
   whatsappUrl,
 } from "@/data/dealership";
 
+/**
+ * The four shots this mosaic is built for, in the order the branch supplies
+ * them. The labels are only reached when a branch has no photography of its
+ * own — they name what is missing rather than leaving four grey squares.
+ */
 const gallery = [
   { label: "Showroom exterior", className: "sm:col-span-2 sm:row-span-2" },
   { label: "Display floor" },
@@ -46,15 +54,70 @@ export function ShowroomPreview() {
       />
 
       <div className="mt-12 grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:gap-14">
+        {/*
+          The showroom's own photography, which this section previously ignored
+          in favour of four hard-coded placeholders — so the page stayed grey
+          even for a branch that had supplied images. It now reads
+          `dealership.gallery` (the primary branch's shots) and falls back to
+          the labelled placeholders only for the slots a branch has not filled.
+
+          Only the lead tile parallaxes. Depth on all four would fight the grid
+          the mosaic depends on: the moment neighbouring tiles move at
+          different rates they stop reading as one arrangement.
+        */}
         <Reveal className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:grid-rows-2">
-          {gallery.map((item) => (
-            <MediaPlaceholder
-              key={item.label}
-              label={item.label}
-              ratio="aspect-square"
-              className={item.className}
-            />
-          ))}
+          {gallery.map((item, index) => {
+            const image = dealership.gallery[index];
+
+            if (!image) {
+              return (
+                <MediaPlaceholder
+                  key={item.label}
+                  label={item.label}
+                  ratio="aspect-square"
+                  className={item.className}
+                />
+              );
+            }
+
+            const media = (
+              <Image
+                src={image.src}
+                alt={image.alt}
+                width={image.width}
+                height={image.height}
+                sizes={
+                  index === 0
+                    ? "(min-width: 1024px) 30vw, 46vw"
+                    : "(min-width: 1024px) 15vw, 46vw"
+                }
+                className="h-full w-full object-cover"
+              />
+            );
+
+            return index === 0 ? (
+              <Parallax
+                key={image.src}
+                speed={12}
+                className={cn(
+                  "bg-surface-muted aspect-square rounded-2xl",
+                  item.className
+                )}
+              >
+                {media}
+              </Parallax>
+            ) : (
+              <div
+                key={image.src}
+                className={cn(
+                  "bg-surface-muted aspect-square overflow-hidden rounded-2xl",
+                  item.className
+                )}
+              >
+                {media}
+              </div>
+            );
+          })}
         </Reveal>
 
         <div className="border-hairline bg-surface-muted flex flex-col rounded-2xl border p-6 sm:p-8">

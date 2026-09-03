@@ -38,10 +38,10 @@ export function VariantSelector() {
             <label
               key={option.id}
               className={cn(
-                "relative flex cursor-pointer flex-col rounded-xl border p-4 transition-colors",
+                "relative flex cursor-pointer flex-col rounded-xl border p-4 transition-[border-color,background-color,box-shadow]",
                 isSelected
-                  ? "border-foreground bg-muted"
-                  : "border-border hover:border-foreground/30",
+                  ? "border-foreground bg-muted shadow-xs"
+                  : "border-border hover:border-foreground/30 hover:bg-muted/40",
                 isUnavailable && "cursor-not-allowed opacity-55"
               )}
             >

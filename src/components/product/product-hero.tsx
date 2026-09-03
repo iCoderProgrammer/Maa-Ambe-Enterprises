@@ -60,15 +60,27 @@ export function ProductHero({ catalogue }: { catalogue: Product[] }) {
         <div className="grid gap-10 lg:grid-cols-[1.05fr_1fr] lg:items-start lg:gap-16">
           <div className="lg:sticky lg:top-24">
             {product.images.hero ? (
-              <Image
-                src={product.images.hero}
-                alt={`${brandedModel(product.name)} electric scooter`}
-                width={1200}
-                height={900}
-                priority
-                sizes="(min-width: 1024px) 50vw, 92vw"
-                className="bg-surface-muted aspect-4/3 w-full rounded-3xl object-cover"
-              />
+              /*
+                A studio render sitting flat on the page background reads as a
+                catalogue thumbnail. The glow behind the frame and the hairline
+                around it do what a showroom's own lighting does: separate the
+                vehicle from the wall it is standing against.
+              */
+              <div className="relative">
+                <div
+                  aria-hidden
+                  className="product-stage-glow absolute -inset-4 -z-10 rounded-[2.25rem] sm:-inset-6"
+                />
+                <Image
+                  src={product.images.hero}
+                  alt={`${brandedModel(product.name)} electric scooter`}
+                  width={1200}
+                  height={900}
+                  priority
+                  sizes="(min-width: 1024px) 50vw, 92vw"
+                  className="bg-surface-muted ring-foreground/8 aspect-4/3 w-full rounded-3xl object-cover ring-1"
+                />
+              </div>
             ) : (
               <MediaPlaceholder
                 label={`${brandedModel(product.name)} — hero visual`}
