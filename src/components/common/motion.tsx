@@ -6,7 +6,16 @@ import { m, type Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { fadeUp, maskUp, staggerContainer, viewportOnce } from "@/lib/motion";
 
-type Element = "div" | "section" | "article" | "li" | "ul" | "ol" | "span";
+type Element =
+  | "div"
+  | "section"
+  | "article"
+  | "li"
+  | "ul"
+  | "ol"
+  | "span"
+  | "p"
+  | "figure";
 
 /**
  * Scroll-entrance primitives.

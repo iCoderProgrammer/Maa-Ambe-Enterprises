@@ -258,9 +258,37 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
     if (document.readyState === "complete") refresh();
     else window.addEventListener("load", refresh, { once: true });
 
+    /*
+     * ...and every time the page changes height afterwards.
+     *
+     * Lenis has its own observer on the root element, and the layout is set up
+     * so that it works (see the note in `app/layout.tsx`). This is the second
+     * half of the same problem: ScrollTrigger caches every start and end point
+     * against the page height too, so an accordion opening or a comparison
+     * table appearing leaves the scroll progress bar reaching 100% early and
+     * the parallax scrubs running against a page that no longer exists.
+     *
+     * One observer on the body drives both. It is coalesced to a frame because
+     * a height change usually arrives as a burst — several elements settling
+     * within the same layout pass — and `ScrollTrigger.refresh()` re-measures
+     * every trigger on the page, which is not something to do repeatedly
+     * inside one frame.
+     */
+    let resizeFrame = 0;
+    const heightObserver = new ResizeObserver(() => {
+      if (resizeFrame) return;
+      resizeFrame = requestAnimationFrame(() => {
+        resizeFrame = 0;
+        refresh();
+      });
+    });
+    heightObserver.observe(document.body);
+
     return () => {
       document.removeEventListener("click", onClick, { capture: true });
       window.removeEventListener("load", refresh);
+      if (resizeFrame) cancelAnimationFrame(resizeFrame);
+      heightObserver.disconnect();
       lockObserver.disconnect();
       resyncRef.current = null;
       lenis.off("scroll", ScrollTrigger.update);

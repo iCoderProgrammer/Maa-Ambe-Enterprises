@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowUpRight, Menu, MessageCircle, Phone } from "lucide-react";
@@ -42,12 +43,23 @@ export function MobileNav() {
         </Button>
       </SheetTrigger>
 
+      {/*
+        `data-[side=right]:w-full`, not a bare `w-full`. The sheet's own width
+        is set by a `data-[side=right]:w-3/4` variant, which is more specific
+        than a plain utility and quietly won — leaving a 292px drawer on a
+        390px phone, too narrow for the brand lockup, which then ran underneath
+        the close button. Matching the selector's specificity makes the
+        full-width intent this file always declared actually take effect.
+      */}
       <SheetContent
         side="right"
         showCloseButton
-        className="w-full gap-0 p-0 sm:max-w-sm"
+        className="gap-0 p-0 data-[side=right]:w-full sm:data-[side=right]:max-w-sm"
       >
-        <SheetHeader className="border-hairline flex-row items-center justify-between border-b p-5">
+        {/* `pr-14` clears the sheet's own close button, which is absolutely
+            positioned at the top right. Without it the brand lockup ran
+            underneath the X on a 390px screen. */}
+        <SheetHeader className="border-hairline flex-row items-center justify-between border-b p-5 pr-14">
           <SheetTitle asChild>
             <div>
               <Logo asLink={false} />
@@ -57,13 +69,17 @@ export function MobileNav() {
 
         <nav aria-label="Main" className="flex-1 overflow-y-auto p-3">
           <ul className="flex flex-col gap-1">
-            {primaryNav.map((item) => {
+            {primaryNav.map((item, index) => {
               const Icon = item.icon;
               const isActive =
                 pathname === item.href || pathname.startsWith(`${item.href}/`);
 
               return (
-                <li key={item.href}>
+                <li
+                  key={item.href}
+                  className="motion-safe:drawer-item"
+                  style={{ "--i": index } as React.CSSProperties}
+                >
                   <SheetClose asChild>
                     <Link
                       href={item.href}

@@ -370,6 +370,14 @@
   }
 }
 
+/* Staggered entrance for the items of the mobile navigation drawer. Applied
+   with `motion-safe:`, so a visitor who prefers reduced motion gets the list
+   immediately and in full. */
+@utility drawer-item {
+  animation: drawer-item-in 0.42s var(--ease-out-brand) both;
+  animation-delay: calc(var(--i, 0) * 40ms + 90ms);
+}
+
 /* Reserve space for the mobile action bar so content is never covered. */
 @utility pb-action-bar {
   padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
@@ -390,6 +398,20 @@
 @keyframes pulse-ring {
   0%, 100% { opacity: 0.55; transform: scale(1); }
   50% { opacity: 0; transform: scale(1.7); }
+}
+
+/* One drawer link arriving after another. `--i` carries the index, and the
+   `both` fill means the item is at its final style before the delay elapses
+   AND after the animation ends — so an item is never left invisible. */
+@keyframes drawer-item-in {
+  from {
+    opacity: 0;
+    transform: translateX(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @keyframes scroll-hint {
