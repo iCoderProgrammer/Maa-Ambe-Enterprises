@@ -7,7 +7,7 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Field, selectClassName } from "@/components/forms/field";
+import { Field, SelectControl } from "@/components/forms/field";
 import { BranchField } from "@/components/forms/branch-field";
 import { getPrimaryBranch } from "@/data/branches";
 import { LeadSuccessState } from "@/components/forms/lead-success-state";
@@ -104,18 +104,17 @@ export function PriceEnquiryForm({
       <div className="grid gap-6 sm:grid-cols-2">
         <Field label="Model" error={errors.model?.message} required>
           {(props) => (
-            <select
+            <SelectControl
               {...props}
               {...register("model")}
               defaultValue={defaultModel ?? products[0]?.slug ?? ""}
-              className={selectClassName}
             >
               {products.map((product) => (
                 <option key={product.slug} value={product.slug}>
                   {product.name}
                 </option>
               ))}
-            </select>
+            </SelectControl>
           )}
         </Field>
 
@@ -126,11 +125,10 @@ export function PriceEnquiryForm({
           hint={variants.length < 2 ? "This model has a single variant" : undefined}
         >
           {(props) => (
-            <select
+            <SelectControl
               {...props}
               {...register("variant")}
               disabled={variants.length < 2}
-              className={selectClassName}
             >
               {variants.length < 2 ? (
                 <option value={variants[0]?.id ?? ""}>
@@ -146,7 +144,7 @@ export function PriceEnquiryForm({
                   ))}
                 </>
               )}
-            </select>
+            </SelectControl>
           )}
         </Field>
 

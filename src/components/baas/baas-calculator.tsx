@@ -5,7 +5,7 @@ import { BatteryCharging, Info, TrendingDown, Wallet, Zap } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Field, selectClassName } from "@/components/forms/field";
+import { Field, SelectControl } from "@/components/forms/field";
 import { cn } from "@/lib/utils";
 import { formatRupees } from "@/lib/format";
 import { calculateBaas } from "@/lib/calculators/baas";
@@ -154,18 +154,17 @@ export function BaasCalculator({ products }: { products: Product[] }) {
         <div className="mt-6 space-y-5">
           <Field label="Model">
             {(props) => (
-              <select
+              <SelectControl
                 {...props}
                 value={slug}
                 onChange={(event) => setSlug(event.target.value)}
-                className={selectClassName}
               >
                 {products.map((item) => (
                   <option key={item.slug} value={item.slug}>
                     {item.name}
                   </option>
                 ))}
-              </select>
+              </SelectControl>
             )}
           </Field>
 
