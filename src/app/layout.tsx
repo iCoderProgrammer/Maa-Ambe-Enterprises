@@ -69,13 +69,32 @@ export const viewport: Viewport = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  /*
+   * NO `h-full` ON `<html>`, AND THE REASON IS A SCROLLING BUG.
+   *
+   * `h-full` pins the root element's box to the viewport, so it stops growing
+   * with the document. Lenis watches exactly that element with a
+   * `ResizeObserver` to know how far the page can scroll — so with the height
+   * pinned the observer never fired, the scroll limit stayed at whatever the
+   * page measured on load, and anything that made the page TALLER afterwards
+   * became unreachable. Opening the FAQ accordions left the last 500px
+   * unscrollable; adding a model on /compare left more than half the
+   * comparison table below a wall.
+   *
+   * The root element now sizes to its content, which is what makes that
+   * observer work. `min-h-svh` on the body keeps the behaviour `min-h-full`
+   * was there for — a full-height column, so the footer's `mt-auto` still
+   * holds it to the bottom of a short page — without pinning anything, and
+   * `svh` rather than `vh` so a mobile browser's collapsing URL bar does not
+   * change it.
+   */
   return (
     <html
       lang="en-IN"
-      className={`${inter.variable} ${sora.variable} h-full antialiased`}
+      className={`${inter.variable} ${sora.variable} antialiased`}
       suppressHydrationWarning
     >
-      <body className="pb-action-bar flex min-h-full flex-col">
+      <body className="pb-action-bar flex min-h-svh flex-col">
         {/*
           Two providers, two jobs, and neither of them makes the tree below
           them a client tree — `children` arrives as an already-rendered

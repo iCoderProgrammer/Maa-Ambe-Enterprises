@@ -115,7 +115,13 @@ export function ProductCard({
           <Button asChild size="default" className="flex-1">
             <Link href={`/electric-scooters/${product.slug}`}>
               Explore
-              <ArrowRight aria-hidden />
+              {/* Driven by the CARD's hover, not the button's, so pointing
+                  anywhere on the card makes the whole thing lean forward as
+                  one object. */}
+              <ArrowRight
+                aria-hidden
+                className="transition-transform duration-300 ease-(--ease-out-brand) group-hover:translate-x-0.5"
+              />
             </Link>
           </Button>
           <Button asChild variant="outline" size="default" className="flex-1">
