@@ -5,8 +5,8 @@ import { ArrowRight, BatteryCharging, Gauge, Route } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MediaPlaceholder } from "@/components/common/media-placeholder";
 import { cn } from "@/lib/utils";
-import { formatPrice, formatSpec } from "@/lib/format";
-import { getStartingPrice, resolveVariant } from "@/lib/products";
+import { formatPrice, formatSpec, TBD } from "@/lib/format";
+import { formatBatteryCapacity, getStartingPrice, resolveVariant } from "@/lib/products";
 import type { Product } from "@/types/product";
 import { brandedModel } from "@/lib/brand";
 
@@ -27,7 +27,7 @@ export function ProductCard({
 }) {
   // Card figures always describe the model's default variant, so a model with
   // several variants never shows a mixed set of specifications.
-  const { specs } = resolveVariant(product);
+  const { specs, images } = resolveVariant(product);
   const startingPrice = getStartingPrice(product);
 
   const keySpecs = [
@@ -35,7 +35,7 @@ export function ProductCard({
     {
       icon: BatteryCharging,
       label: "Battery",
-      value: formatSpec(specs.batteryCapacityKwh, "kWh", 1),
+      value: formatBatteryCapacity(specs) ?? TBD,
     },
     {
       icon: Gauge,
@@ -52,9 +52,9 @@ export function ProductCard({
       )}
     >
       <div className="bg-surface-muted relative">
-        {product.images.card ? (
+        {images.card ? (
           <Image
-            src={product.images.card}
+            src={images.card}
             alt={`${brandedModel(product.name)} electric scooter`}
             width={640}
             height={480}

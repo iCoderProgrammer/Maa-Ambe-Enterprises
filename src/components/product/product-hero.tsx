@@ -8,7 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/common/container";
 import { MediaPlaceholder } from "@/components/common/media-placeholder";
-import { formatPrice, formatSpec } from "@/lib/format";
+import { formatPrice, formatSpec, TBD } from "@/lib/format";
+import { formatBatteryCapacity } from "@/lib/product-utils";
 import { useProduct } from "@/components/product/product-provider";
 import { VariantSelector } from "@/components/product/variant-selector";
 import { TestRideModal } from "@/components/forms/test-ride-modal";
@@ -37,14 +38,16 @@ const availabilityLabel = {
  * Enterprises" rather than implying the dealership builds it.
  */
 export function ProductHero({ catalogue }: { catalogue: Product[] }) {
-  const { product, variant, specs } = useProduct();
+  const { product, variant, specs, images } = useProduct();
 
   const keySpecs = [
     { icon: Route, label: "Claimed range", value: formatSpec(specs.range.claimedKm, "km") },
     {
       icon: BatteryCharging,
       label: "Battery",
-      value: formatSpec(specs.batteryCapacityKwh, "kWh", 1),
+      // Published as kWh for most of the range and as "30 Ah" or a bare
+      // voltage for ZYRO — whichever the brand prints is what shows.
+      value: formatBatteryCapacity(specs) ?? TBD,
     },
     { icon: Gauge, label: "Top speed", value: formatSpec(specs.topSpeedKmph, "km/h") },
     {
@@ -59,7 +62,7 @@ export function ProductHero({ catalogue }: { catalogue: Product[] }) {
       <Container>
         <div className="grid gap-10 lg:grid-cols-[1.05fr_1fr] lg:items-start lg:gap-16">
           <div className="lg:sticky lg:top-24">
-            {product.images.hero ? (
+            {images.hero ? (
               /*
                 A studio render sitting flat on the page background reads as a
                 catalogue thumbnail. The glow behind the frame and the hairline
@@ -72,8 +75,11 @@ export function ProductHero({ catalogue }: { catalogue: Product[] }) {
                   className="product-stage-glow absolute -inset-4 -z-10 rounded-[2.25rem] sm:-inset-6"
                 />
                 <Image
-                  src={product.images.hero}
-                  alt={`${brandedModel(product.name)} electric scooter`}
+                  // Keyed by source so switching variant remounts the element
+                  // rather than swapping `src` under a decoded frame.
+                  key={images.hero}
+                  src={images.hero}
+                  alt={`${brandedModel(product.name)} ${variant.name} electric scooter`}
                   width={1200}
                   height={900}
                   priority
@@ -83,7 +89,7 @@ export function ProductHero({ catalogue }: { catalogue: Product[] }) {
               </div>
             ) : (
               <MediaPlaceholder
-                label={`${brandedModel(product.name)} — hero visual`}
+                label={`${brandedModel(product.name)} ${variant.name} — hero visual`}
                 className="rounded-3xl"
               />
             )}
@@ -106,14 +112,24 @@ export function ProductHero({ catalogue }: { catalogue: Product[] }) {
 
             <VariantSelector />
 
+            {/*
+              Labelled for the VARIANT, not the model. This figure follows the
+              variant selector above it, so calling it "starting at" — as the
+              lineup card correctly does for the model's floor price — would
+              contradict that card whenever the selected variant is not the
+              cheapest one. On ZYRO it would read "starting at ₹67,500" beside a
+              card advertising ₹51,741.
+            */}
             <div className="border-hairline mt-8 border-t pt-8">
-              <p className="text-muted-foreground text-xs">Starting at</p>
+              <p className="text-muted-foreground text-xs">
+                {variant.name} · ex-showroom
+              </p>
               <p className="font-display mt-1 text-display-md font-semibold">
                 {formatPrice(variant.price)}
               </p>
               <p className="text-muted-foreground mt-1.5 text-xs">
                 {variant.price != null
-                  ? "Ex-showroom. On-road price varies by city."
+                  ? "On-road price varies by city."
                   : "Price on request — tell us your city and we will send the current on-road price."}
               </p>
             </div>

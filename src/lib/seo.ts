@@ -1,6 +1,11 @@
 import type { Crumb } from "@/components/common/breadcrumbs";
 import type { Faq } from "@/data/faqs";
-import type { Product, ProductSpecs, ProductVariant } from "@/types/product";
+import type {
+  Product,
+  ProductImages,
+  ProductSpecs,
+  ProductVariant,
+} from "@/types/product";
 import { dealership } from "@/data/dealership";
 import { absoluteUrl, siteConfig } from "@/config/site";
 import { brandedModel } from "@/lib/brand";
@@ -158,7 +163,9 @@ export function websiteSchema() {
 export function productJsonLd(
   product: Product,
   variant: ProductVariant,
-  specs: ProductSpecs
+  specs: ProductSpecs,
+  /** Resolved artwork for `variant` — its own where it has any, else the model's. */
+  images: ProductImages
 ) {
   const url = absoluteUrl(`/electric-scooters/${product.slug}`);
 
@@ -169,12 +176,21 @@ export function productJsonLd(
       value: specs.range.claimedKm,
       unitCode: "KMT",
     },
-    specs.batteryCapacityKwh != null && {
-      "@type": "PropertyValue",
-      name: "Battery capacity",
-      value: specs.batteryCapacityKwh,
-      unitCode: "KWH",
-    },
+    specs.batteryCapacityKwh != null
+      ? {
+          "@type": "PropertyValue",
+          name: "Battery capacity",
+          value: specs.batteryCapacityKwh,
+          unitCode: "KWH",
+        }
+      : // A pack the brand publishes as "30 Ah" or "48V" has no kilowatt-hour
+        // value to emit, so it goes out as the published string with no unit
+        // code rather than being converted or dropped.
+        specs.batteryCapacityLabel != null && {
+          "@type": "PropertyValue",
+          name: "Battery capacity",
+          value: specs.batteryCapacityLabel,
+        },
     specs.topSpeedKmph != null && {
       "@type": "PropertyValue",
       name: "Top speed",
@@ -193,8 +209,8 @@ export function productJsonLd(
     // The manufacturer, never the dealership selling it.
     brand: { "@type": "Brand", name: siteConfig.brand },
     url,
-    ...(product.images.og || product.images.hero
-      ? { image: absoluteUrl(product.images.og ?? product.images.hero!) }
+    ...(images.og || images.hero
+      ? { image: absoluteUrl(images.og ?? images.hero!) }
       : {}),
     ...(variant.price != null
       ? {

@@ -1,9 +1,11 @@
 import type {
   ChargingSpec,
   FeatureId,
+  GalleryImage,
   MotorSpec,
   Product,
   ProductColor,
+  ProductImages,
   ProductSpecs,
   ProductVariant,
   RangeSpec,
@@ -70,6 +72,10 @@ export function resolveSpecs(
       override.batteryCapacityKwh !== undefined
         ? override.batteryCapacityKwh
         : base.batteryCapacityKwh,
+    batteryCapacityLabel:
+      override.batteryCapacityLabel !== undefined
+        ? override.batteryCapacityLabel
+        : base.batteryCapacityLabel,
     batteryRemovable:
       override.batteryRemovable !== undefined
         ? override.batteryRemovable
@@ -117,6 +123,37 @@ export function getVariantColors(
   return product.colors.filter((color) => variant.colorIds!.includes(color.id));
 }
 
+/**
+ * Artwork for a variant, falling back per slot to the model's own.
+ *
+ * Resolved slot by slot rather than all-or-nothing: a variant that supplies a
+ * hero and a card but no social image keeps the model's OG image instead of
+ * losing it, which is the realistic state of a half-photographed model.
+ */
+export function resolveImages(
+  product: Product,
+  variantId?: string
+): ProductImages {
+  const variant = getVariant(product, variantId);
+  const override = variant.images;
+
+  if (!override) return product.images;
+
+  return {
+    card: override.card !== undefined ? override.card : product.images.card,
+    hero: override.hero !== undefined ? override.hero : product.images.hero,
+    og: override.og !== undefined ? override.og : product.images.og,
+  };
+}
+
+/** The variant's own gallery when it has one, otherwise the model's. */
+export function resolveGallery(
+  product: Product,
+  variantId?: string
+): GalleryImage[] {
+  return getVariant(product, variantId).gallery ?? product.gallery;
+}
+
 /** A variant plus everything a page needs to render it. */
 export function resolveVariant(
   product: Product,
@@ -130,6 +167,8 @@ export function resolveVariant(
     specs: resolveSpecs(product, variant.id),
     colors: getVariantColors(product, variant.id),
     baas: variant.baas,
+    images: resolveImages(product, variant.id),
+    gallery: resolveGallery(product, variant.id),
   };
 }
 
@@ -143,15 +182,36 @@ export function variantHasOverrides(variant: ProductVariant): boolean {
 /* -------------------------------------------------------------------------- */
 
 /**
- * Lowest confirmed ex-showroom price across a model's variants.
- * Returns null when no variant has a confirmed price — never 0.
+ * The model's "starting at" ex-showroom price.
+ *
+ * The manufacturer's own published starting price wins when there is one,
+ * because that is the figure a customer will have read before walking in. Only
+ * when Lectrix EV publishes none do we fall back to the lowest price we have
+ * confirmed for an individual variant.
+ *
+ * Returns null when neither exists — never 0, and never a variant price
+ * presented as the model's floor when a cheaper variant is merely unpriced.
  */
 export function getStartingPrice(product: Product): number | null {
+  if (product.publishedStartingPrice != null) return product.publishedStartingPrice;
+
   const prices = product.variants
     .map((variant) => variant.price)
     .filter((price): price is number => price != null);
 
   return prices.length > 0 ? Math.min(...prices) : null;
+}
+
+/**
+ * Pack size as published: kilowatt-hours where the brand gives them, the
+ * verbatim label ("30 Ah", "60V") where it does not, null where neither is
+ * confirmed. Never converts between the two — see `batteryCapacityLabel`.
+ */
+export function formatBatteryCapacity(specs: ProductSpecs): string | null {
+  if (specs.batteryCapacityKwh != null) {
+    return `${specs.batteryCapacityKwh.toFixed(1)} kWh`;
+  }
+  return specs.batteryCapacityLabel;
 }
 
 /** Highest claimed range across variants, for "up to X km" messaging. */

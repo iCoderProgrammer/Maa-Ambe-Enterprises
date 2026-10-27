@@ -41,6 +41,21 @@ export function getProductVariants(slug: string): ProductVariant[] {
   return getProductBySlug(slug)?.variants ?? [];
 }
 
+/**
+ * The lineup as a readable list: "NDuro, LXS, ZYRO and SX25".
+ *
+ * Page descriptions and meta tags used to spell the models out by hand, which
+ * meant every lineup change left a stale sentence somewhere in the `<head>`
+ * where nobody looks. Built from the catalogue instead, so a new model names
+ * itself.
+ */
+export function getModelNames(): string {
+  const names = products.map((product) => product.name);
+  if (names.length < 2) return names.join("");
+
+  return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+}
+
 /** Models offered on Battery-as-a-Service. */
 export function getBaasProducts(): Product[] {
   return products.filter(isBaasAvailable);
@@ -109,8 +124,12 @@ export {
   getDefaultVariant,
   resolveSpecs,
   getVariantColors,
+  resolveImages,
+  resolveGallery,
   resolveVariant,
   variantHasOverrides,
+  formatBatteryCapacity,
+  formatGradeability,
   getStartingPrice,
   getMaxRange,
   getMaxTopSpeed,

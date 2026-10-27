@@ -3,71 +3,146 @@ import type { Product } from "@/types/product";
 /**
  * ZYRO
  *
- * Copy is provisional and awaiting brand approval. Every specification, price,
- * colour, feature and warranty term below is `null` or empty until the
- * dealership supplies confirmed figures — see `_template.ts` for a fully
- * populated example, including how to express variant-level differences.
+ * SOURCE OF THE FIGURES BELOW
+ *
+ * Per-variant range, top speed and pack from the comparison cards Lectrix EV
+ * publishes on its homepage; boot volume, charging rate, running cost, prices
+ * and the feature list from the ZYRO product page.
+ *
+ * WHY `batteryCapacityKwh` IS NULL ON EVERY VARIANT
+ *
+ * Lectrix EV does not state ZYRO's pack in kilowatt-hours. It states "30 Ah"
+ * for the LI and bare nominal voltages — "60V", "48V" — for the two lead-acid
+ * variants. Ampere-hours need the pack voltage before they become kWh, and a
+ * voltage on its own is not a capacity at all, so converting either would mean
+ * printing a figure the manufacturer never published. Each variant carries the
+ * brand's own string in `batteryCapacityLabel` instead, and the spec sheet
+ * renders that.
+ *
+ * ZYRO is also the reason `publishedStartingPrice` exists — see below.
  */
 export const zyro: Product = {
   slug: "zyro",
   name: "ZYRO",
   tagline: "Light, easy and city-sized.",
   description:
-    "A compact, easy-to-handle electric scooter for shorter city journeys — the simplest way into electric riding for a first-time owner.",
+    "A compact, easy-to-handle electric scooter for shorter city journeys — the simplest way into electric riding for a first-time owner, in a lithium version and two lead-acid ones.",
   category: "entry",
-  order: 4,
+  order: 3,
   featured: false,
 
-  // Baseline specification for the model. Variants override individual fields.
+  /**
+   * Baseline: what the ZYRO platform shares. All three variants are 25 km/h
+   * scooters — the class that needs no licence or registration in India — with
+   * the same 22 litre boot and 6 A charging. Range and pack differ per variant.
+   */
   specs: {
     batteryCapacityKwh: null,
+    batteryCapacityLabel: null,
     batteryRemovable: null,
     batteryChemistry: null,
-    range: { claimedKm: null, realWorldKm: null },
-    topSpeedKmph: null,
+    range: { claimedKm: 85, realWorldKm: null },
+    topSpeedKmph: 25,
     accelerationSeconds: null,
-    charging: { fullChargeHours: null, eightyPercentHours: null, chargerType: null },
+    charging: {
+      fullChargeHours: null,
+      eightyPercentHours: null,
+      chargerType: "6 A advanced charger",
+    },
     motor: { type: null, ratedPowerW: null, peakPowerW: null },
     gradeabilityPercent: null,
     gradeabilityDegrees: null,
     ipRating: null,
-    bootSpaceLitres: null,
+    bootSpaceLitres: 22,
     kerbWeightKg: null,
     ridingModes: [],
   },
 
-  // Add one entry per variant the showroom actually sells. A variant lists
-  // ONLY the specs that differ from the baseline above.
   variants: [
     {
-      id: "standard",
-      name: "Standard",
+      id: "zyro-li",
+      name: "ZYRO LI",
+      // The one ZYRO price shown against a named variant: the product page's
+      // variant panel prints ₹67,500 with ZYRO LI selected.
+      price: 67500,
+      availability: "available",
+      specs: {
+        batteryChemistry: "Lithium-ion",
+        batteryCapacityLabel: "30 Ah",
+      },
+      baas: null,
+      images: {
+        card: "/images/products/zyro-li-card.png",
+        hero: "/images/products/zyro-li-hero.png",
+        og: "/images/products/zyro-li-og.png",
+      },
+    },
+    {
+      id: "zyro-la-60v",
+      name: "ZYRO LA (60V)",
+      // Lectrix EV publishes no price against either lead-acid variant — only
+      // the family's "Starting From ₹51,741". See `publishedStartingPrice`.
       price: null,
       availability: "available",
-      specs: {},
+      specs: {
+        batteryChemistry: "Lead-acid",
+        batteryCapacityLabel: "60V",
+        range: { claimedKm: 75, realWorldKm: null },
+      },
       baas: null,
+      images: {
+        card: "/images/products/zyro-la-60v-card.png",
+        hero: "/images/products/zyro-la-60v-hero.png",
+        og: "/images/products/zyro-la-60v-og.png",
+      },
+    },
+    {
+      id: "zyro-la-48v",
+      name: "ZYRO LA (48V)",
+      price: null,
+      availability: "available",
+      specs: {
+        batteryChemistry: "Lead-acid",
+        batteryCapacityLabel: "48V",
+        range: { claimedKm: 60, realWorldKm: null },
+      },
+      baas: null,
+      images: {
+        card: "/images/products/zyro-la-48v-card.png",
+        hero: "/images/products/zyro-la-48v-hero.png",
+        og: "/images/products/zyro-la-48v-og.png",
+      },
     },
   ],
-  defaultVariantId: "standard",
+  defaultVariantId: "zyro-li",
 
-  // Connected features offered through the Lectrix EV app.
-  smartFeatures: [
-    "mobile-app",
-    "geo-fencing",
-    "navigation",
-    "anti-theft",
-    "sos",
-    "vehicle-monitoring",
-  ],
-  // Empty until the dealership confirms which features this model carries.
-  // Ids must exist in src/data/feature-catalog.ts.
-  safetyFeatures: [],
-  comfortFeatures: [],
+  /**
+   * "Starting From ₹51,741/- (Ex-Showroom Price) including charger", printed on
+   * the ZYRO product page for the model as a whole.
+   *
+   * It is recorded here rather than against a variant because Lectrix EV does
+   * not say which variant it belongs to, and the only variant price we can
+   * attribute is the LI's ₹67,500. Without this field the lineup card would
+   * take the minimum of what it knows and advertise ZYRO from ₹67,500 —
+   * ₹15,759 more than the brand's own figure.
+   */
+  publishedStartingPrice: 51741,
 
+  // Every one of these is named on the ZYRO product page's own feature panels.
+  smartFeatures: ["anti-theft"],
+  safetyFeatures: ["disc-brakes", "led-headlamp", "reverse-assist"],
+  comfortFeatures: ["cruise-control", "digital-console"],
+
+  // The page advertises "Dual Tone" finishes but names none of them.
   colors: [],
-  // Placeholder artwork generated by `scripts/generate-placeholder-images.py`.
-  // Every file carries a visible PLACEHOLDER badge; swap in real photography
-  // at the same paths and sizes and nothing else needs to change.
+
+  /**
+   * Placeholder artwork generated by `scripts/generate-placeholder-images.py`.
+   * Every file carries a visible PLACEHOLDER badge. Each variant points at its
+   * own set so switching variant changes the visual; the model-level images
+   * below are the fallback. Swap real photography in at the same paths and
+   * sizes and nothing else needs to change.
+   */
   images: {
     card: "/images/products/zyro-card.png",
     hero: "/images/products/zyro-hero.png",
@@ -101,11 +176,46 @@ export const zyro: Product = {
   ],
   warranty: { vehicle: null, battery: null, notes: null },
 
-  faqs: [],
+  faqs: [
+    {
+      question: "What is the difference between ZYRO LI and ZYRO LA?",
+      answer:
+        "The battery. LI is lithium-ion, rated by Lectrix EV at up to 85 km and listed at ₹67,500 ex-showroom. LA is lead-acid, in a 60V version rated at up to 75 km and a 48V version at up to 60 km, and it is where the ₹51,741 starting price comes from. Lithium costs more up front, weighs less and lasts longer; lead-acid is the cheapest way onto a ZYRO.",
+    },
+    {
+      question: "Do I need a licence or registration for the ZYRO?",
+      answer:
+        "Every ZYRO variant tops out at 25 km/h, which puts it in the low-speed class that does not require registration or a driving licence in India. Come in and we will walk you through what that means for insurance and for where you can ride it.",
+    },
+    {
+      question: "How much does the ZYRO cost?",
+      answer:
+        "Lectrix EV advertises the ZYRO from ₹51,741 ex-showroom including the charger, and lists the ZYRO LI at ₹67,500. Both figures exclude insurance, road tax and registration charges. Prices for the individual lead-acid variants are not published — ask us and we will confirm the current ones.",
+    },
+    {
+      question: "How far does a ZYRO go on one charge?",
+      answer:
+        "Lectrix EV rates the LI at up to 85 km, the LA 60V at up to 75 km and the LA 48V at up to 60 km. Those are claimed figures under test conditions — rider weight, load and how much of your route is uphill all take a bite out of them.",
+    },
+    {
+      question: "What is the boot space?",
+      answer:
+        "22 litres under the seat, which Lectrix EV pitches at everyday errands rather than at a full-face helmet. Bring your helmet to the showroom and try it — that is the only test that settles it.",
+    },
+    {
+      question: "What features does the ZYRO come with?",
+      answer:
+        "Cruise mode, reverse mode, an anti-theft alert, disc brakes, an LED speedometer, ambient side lighting, alloy wheels and dual-tone paint. Lectrix EV quotes a running cost of ₹0.12 per kilometre.",
+    },
+  ],
   dataStatus: {
-    specsConfirmed: false,
-    pricingConfirmed: false,
-    featuresConfirmed: false,
+    // Everything Lectrix EV publishes for the ZYRO is entered. Motor output,
+    // charge time, kerb weight, ingress rating and warranty are unpublished.
+    specsConfirmed: true,
+    // The LI price and the family starting price are confirmed; the two
+    // lead-acid variants are not individually priced.
+    pricingConfirmed: true,
+    featuresConfirmed: true,
     warrantyConfirmed: false,
     colorsConfirmed: false,
     imagesSupplied: false,

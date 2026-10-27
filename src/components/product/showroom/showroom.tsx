@@ -15,7 +15,7 @@ import { ShowroomStatCardsBlock } from "@/components/product/showroom/showroom-s
  *
  * Entirely data-driven: it renders whatever sections and blocks the model's
  * showroom file declares, in the order it declares them, and knows nothing
- * about NDuro. Giving LXS 3.0 the same experience is a data file, not a change
+ * about NDuro. Giving the LXS the same experience is a data file, not a change
  * here.
  *
  * Server-rendered apart from three leaves that genuinely need state — the

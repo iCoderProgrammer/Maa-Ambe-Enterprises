@@ -85,6 +85,18 @@ export interface ChargingSpec {
  */
 export interface ProductSpecs {
   batteryCapacityKwh: number | null;
+  /**
+   * Pack size exactly as the manufacturer prints it, when it is not published
+   * in kWh.
+   *
+   * Lectrix EV states ZYRO's pack as "30 Ah", "60V" and "48V" rather than in
+   * kilowatt-hours. Ampere-hours cannot be turned into kilowatt-hours without
+   * the pack voltage, and a voltage on its own carries no capacity at all, so
+   * converting would mean publishing a figure the brand never did. The string
+   * is therefore carried verbatim and `batteryCapacityKwh` stays `null` —
+   * `formatBatteryCapacity()` renders whichever of the two exists.
+   */
+  batteryCapacityLabel: string | null;
   /** Removable vs fixed pack. */
   batteryRemovable: boolean | null;
   batteryChemistry: string | null;
@@ -136,6 +148,22 @@ export interface ProductVariant {
   baas: BaasTerms | null;
   /** Restrict colours to a subset for this variant. Omit to offer all. */
   colorIds?: string[];
+  /**
+   * Artwork that shows THIS variant rather than the model generally.
+   *
+   * Partial on purpose: a variant may have its own hero and card shot but no
+   * separate social image, and each slot falls back to the model's
+   * independently. Omit the field entirely when no variant-specific
+   * photography exists — inheriting the model's shot is the honest default,
+   * and is what NDuro does, because no separate 2.0/3.0 imagery is published.
+   */
+  images?: Partial<ProductImages>;
+  /**
+   * Gallery for this variant. Replaces the model's gallery wholesale rather
+   * than adding to it: a mixed rail of two different variants is worse than
+   * either one on its own. Omit to show the model's gallery.
+   */
+  gallery?: GalleryImage[];
 }
 
 export interface ProductColor {
@@ -201,6 +229,19 @@ export interface Product {
   variants: ProductVariant[];
   defaultVariantId: string;
 
+  /**
+   * The "starting from" price the manufacturer publishes for the model as a
+   * whole, INR — set only when Lectrix EV prints one.
+   *
+   * This exists because a model's cheapest variant and its cheapest CONFIRMED
+   * variant are not the same thing. Lectrix EV publishes ZYRO from ₹51,741 but
+   * attaches a price to only one of its three variants, so taking the minimum
+   * of what we know would advertise ZYRO as starting ₹15,759 above what the
+   * brand itself asks. When this is set, `getStartingPrice()` uses it; when it
+   * is `null` the minimum of the confirmed variant prices stands.
+   */
+  publishedStartingPrice: number | null;
+
   smartFeatures: SmartFeatureId[];
   safetyFeatures: SafetyFeatureId[];
   comfortFeatures: ComfortFeatureId[];
@@ -222,4 +263,8 @@ export interface ResolvedVariant {
   /** Colours actually offered on this variant. */
   colors: ProductColor[];
   baas: BaasTerms | null;
+  /** Variant artwork where it exists, the model's where it does not. */
+  images: ProductImages;
+  /** The variant's own gallery, or the model's. */
+  gallery: GalleryImage[];
 }

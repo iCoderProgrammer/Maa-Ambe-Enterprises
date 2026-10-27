@@ -5,14 +5,13 @@ import type { Product } from "@/types/product";
  *
  * SOURCE OF THE FIGURES BELOW
  *
- * Every specification here is one Lectrix EV publishes on its own NDuro
- * product page — boot space, 0–40 time, IDC range, pack size, gradeability,
- * ingress rating, riding modes, colour names and the two variants. Nothing is
- * derived, rounded or inferred: a figure the manufacturer does not publish
- * stays `null` and the UI renders it as pending, which is why price, top
- * speed, charge time, motor output and kerb weight are still blank. The
- * dealership supplies those; until then the page asks the customer to call
- * rather than showing a number nobody stands behind.
+ * Every specification here is one Lectrix EV publishes itself — the per-variant
+ * comparison cards on lectrixev.com ("Choose Your Lectrix") and the NDuro
+ * product page. Nothing is derived, rounded or inferred: a figure the
+ * manufacturer does not publish stays `null` and the UI renders it as pending,
+ * which is why price, charge time, motor output and kerb weight are still
+ * blank. The dealership supplies those; until then the page asks the customer
+ * to call rather than showing a number nobody stands behind.
  *
  * Two figures the brand states qualitatively rather than as a spec field —
  * the 1.25 lakh km durability test and the 300 mm water-wading test — live in
@@ -30,12 +29,15 @@ export const nduro: Product = {
   featured: true,
 
   // Baseline specification for the model. Variants override individual fields.
+  // Top speed and gradeability are shared across all three variants; range,
+  // pack size and the 0-40 time are not, so they are restated per variant.
   specs: {
     batteryCapacityKwh: 2.3,
+    batteryCapacityLabel: null,
     batteryRemovable: null,
     batteryChemistry: null,
     range: { claimedKm: 90, realWorldKm: null },
-    topSpeedKmph: null,
+    topSpeedKmph: 65,
     accelerationSeconds: 5.1,
     charging: { fullChargeHours: null, eightyPercentHours: null, chargerType: null },
     motor: { type: null, ratedPowerW: null, peakPowerW: null },
@@ -48,10 +50,14 @@ export const nduro: Product = {
   },
 
   /**
-   * Both variants are published with the same 90 km IDC range. NDuro 3.0's
-   * pack size is not published, so it is restated as `null` rather than
-   * inheriting 2.3 kWh from the baseline — a variant may not borrow a figure
-   * that has not been confirmed for it.
+   * Three variants, exactly as the brand lists them: NDuro 2.0 and NDuro 3.0
+   * bought outright, and NDuro BaaS — the same 2.0 hardware sold without its
+   * battery, which is why its range, pack and 0-40 figures match the 2.0's and
+   * only the ownership terms differ.
+   *
+   * No variant carries its own artwork: Lectrix EV publishes one set of NDuro
+   * photography covering all three, so all three inherit the model's images
+   * rather than being given a stand-in that implies a difference we cannot see.
    */
   variants: [
     {
@@ -60,7 +66,7 @@ export const nduro: Product = {
       price: null,
       availability: "available",
       specs: {},
-      baas: { vehiclePrice: null, monthlySubscription: null, minimumTermMonths: null },
+      baas: null,
     },
     {
       id: "nduro-3-0",
@@ -68,13 +74,35 @@ export const nduro: Product = {
       price: null,
       availability: "available",
       specs: {
-        batteryCapacityKwh: null,
-        range: { claimedKm: 90, realWorldKm: null },
+        batteryCapacityKwh: 3,
+        range: { claimedKm: 117, realWorldKm: null },
+        accelerationSeconds: 5.5,
       },
       baas: null,
     },
+    {
+      id: "nduro-baas",
+      name: "NDuro BaaS",
+      // The ex-showroom price of the vehicle-without-battery is published for
+      // LXS BaaS only; Lectrix EV does not print the NDuro BaaS equivalent, so
+      // both this and `baas.vehiclePrice` stay null rather than borrowing it.
+      price: null,
+      availability: "available",
+      specs: {},
+      baas: {
+        vehiclePrice: null,
+        // ₹1,199/month is stated for the Battery-as-a-Service programme, with
+        // NDuro BaaS and LXS BaaS both offered under it on the same page.
+        monthlySubscription: 1199,
+        minimumTermMonths: null,
+      },
+    },
   ],
   defaultVariantId: "nduro-2-0",
+
+  // Lectrix EV publishes no "starting from" figure for NDuro, and no variant
+  // price is confirmed, so the card correctly reads "price on request".
+  publishedStartingPrice: null,
 
   // Connected features offered through the Lectrix EV app.
   smartFeatures: [
@@ -110,9 +138,9 @@ export const nduro: Product = {
     },
   ],
   images: {
-    // A real photograph rather than the generated stand-in every other model
-    // still carries: the lineup grid puts these cards side by side, and one
-    // genuine ride shot next to four placeholders is the honest state of the
+    // Real photography rather than the generated stand-ins the rest of the
+    // lineup still carries: the grid puts these cards side by side, and one
+    // genuine ride shot next to the placeholders is the honest state of the
     // asset set — the models still waiting on photography say so on the card.
     card: "/images/nduro/nduro-performance-01.webp",
     hero: "/images/nduro/nduro.webp",
@@ -144,13 +172,27 @@ export const nduro: Product = {
       height: 768,
     },
   ],
-  warranty: { vehicle: null, battery: null, notes: null },
+  warranty: {
+    // Lectrix EV states this warranty for the NDuro 2.0 and 3.0 by name.
+    vehicle: { years: 3, kilometres: 36000 },
+    // Not published separately for the bought-outright variants. On NDuro BaaS
+    // the battery is not owned at all — it is replaced free under the
+    // subscription — so a years/kilometres term would misdescribe it.
+    battery: null,
+    notes:
+      "Lectrix EV states 3 years / 36,000 km on the NDuro 2.0 and NDuro 3.0. On NDuro BaaS the battery stays with Lectrix EV and is replaced free of charge under the subscription instead of carrying a fixed term.",
+  },
 
   faqs: [
     {
       question: "How many kilometres does the NDuro cover on one full charge?",
       answer:
-        "Both variants are rated at up to 90 km on the IDC test cycle. Real-world range depends on rider weight, terrain, traffic and riding mode, so treat the IDC figure as a comparison number rather than a promise — we will tell you what our own customers are seeing on Kanpur roads.",
+        "Lectrix EV rates the NDuro 2.0 at up to 90 km and the NDuro 3.0 at up to 117 km on the IDC test cycle; the NDuro BaaS matches the 2.0 at 90 km. Real-world range depends on rider weight, terrain, traffic and riding mode, so treat the IDC figure as a comparison number rather than a promise — we will tell you what our own customers are seeing on Kanpur roads.",
+    },
+    {
+      question: "What is the difference between the NDuro 2.0 and the NDuro 3.0?",
+      answer:
+        "The pack and the range. The 2.0 runs a 2.3 kWh battery for up to 90 km; the 3.0 runs a 3 kWh battery for up to 117 km. Both top out at 65 km/h, and the 2.0 is marginally quicker to 40 km/h at 5.1 seconds against 5.5. Everything else — boot space, gradeability, riding modes, the display — is the same scooter.",
     },
     {
       question: "How many colours does the NDuro come in?",
@@ -165,7 +207,12 @@ export const nduro: Product = {
     {
       question: "Is the NDuro available on Battery-as-a-Service?",
       answer:
-        "The NDuro 2.0 is offered on Battery-as-a-Service: you buy the scooter without the battery and pay a monthly subscription for it instead. The subscription amount and minimum term are set by Lectrix EV — ask us for the current terms.",
+        "Yes — NDuro BaaS is a variant in its own right. You buy the scooter without the battery and pay Lectrix EV ₹1,199 a month for it instead, which covers free replacement and puts no monthly kilometre limit on you. The vehicle price for the BaaS variant is not published, so ask us for the current figure.",
+    },
+    {
+      question: "What warranty does the NDuro carry?",
+      answer:
+        "Lectrix EV states 3 years or 36,000 km, whichever comes first, on the NDuro 2.0 and NDuro 3.0. On NDuro BaaS the battery is not yours to warrant — it is replaced free under the subscription for as long as you hold it.",
     },
     {
       question: "Is the charger included in the price?",
@@ -175,7 +222,7 @@ export const nduro: Product = {
     {
       question: "Can I take a test ride before deciding?",
       answer:
-        "Yes, and we would rather you did. Test rides are free, take about fifteen minutes and run from either of our showrooms. Bring your licence and we will have an NDuro charged and waiting.",
+        "Yes, and we would rather you did. Test rides are free, take about fifteen minutes and run from any of our showrooms. Bring your licence and we will have an NDuro charged and waiting.",
     },
   ],
   dataStatus: {
@@ -184,7 +231,7 @@ export const nduro: Product = {
     specsConfirmed: true,
     pricingConfirmed: false,
     featuresConfirmed: true,
-    warrantyConfirmed: false,
+    warrantyConfirmed: true,
     colorsConfirmed: true,
     imagesSupplied: true,
   },

@@ -25,6 +25,9 @@ export const templateProduct: Product = {
   // Baseline: true for every variant unless a variant overrides it.
   specs: {
     batteryCapacityKwh: 2.3,
+    // Only set when the brand publishes the pack in something other than kWh
+    // ("30 Ah", "48V"). Never both, and never a conversion between them.
+    batteryCapacityLabel: null,
     batteryRemovable: true,
     batteryChemistry: "Lithium-ion (NMC)",
     range: { claimedKm: 105, realWorldKm: 80 },
@@ -54,6 +57,8 @@ export const templateProduct: Product = {
       specs: {},
       baas: null,
       colorIds: ["midnight-black", "arctic-white"],
+      // No `images` key: this variant inherits the model's artwork. That is the
+      // right default whenever a variant has no photography of its own.
     },
     {
       id: "long-range",
@@ -77,9 +82,28 @@ export const templateProduct: Product = {
         monthlySubscription: 1499,
         minimumTermMonths: 12,
       },
+      // Variant-specific artwork. Slots are resolved one by one, so omitting
+      // `og` here keeps the model's social image rather than blanking it.
+      images: {
+        card: "/images/products/template-model/long-range-card.webp",
+        hero: "/images/products/template-model/long-range-hero.webp",
+      },
+      // Replaces the model gallery wholesale for this variant. Omit to inherit.
+      gallery: [
+        {
+          src: "/images/products/template-model/long-range-gallery-1.webp",
+          alt: "Template Model Long Range electric scooter, front three-quarter view",
+          width: 1600,
+          height: 1200,
+        },
+      ],
     },
   ],
   defaultVariantId: "standard",
+
+  // Set ONLY when the manufacturer prints a model-wide "starting from" price.
+  // Otherwise null, and the lowest confirmed variant price is used instead.
+  publishedStartingPrice: null,
 
   smartFeatures: ["mobile-app", "navigation", "anti-theft", "vehicle-monitoring"],
   safetyFeatures: [

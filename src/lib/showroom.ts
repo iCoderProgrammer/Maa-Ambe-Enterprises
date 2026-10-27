@@ -1,6 +1,6 @@
 import type { ProductSpecs } from "@/types/product";
 import type { ShowroomStatKey } from "@/types/showroom";
-import { formatGradeability } from "@/lib/product-utils";
+import { formatBatteryCapacity, formatGradeability } from "@/lib/product-utils";
 
 /** A figure ready to render: a big number and the unit that qualifies it. */
 export interface ShowroomStat {
@@ -38,10 +38,13 @@ export function resolveShowroomStat(
         ? { value: `${specs.range.claimedKm} km`, unit: "IDC range" }
         : null;
 
-    case "batteryCapacityKwh":
-      return specs.batteryCapacityKwh != null
-        ? { value: `${specs.batteryCapacityKwh} kWh`, unit: "battery" }
-        : null;
+    case "batteryCapacityKwh": {
+      // Named for the common case but resolved through the shared formatter, so
+      // a model whose pack the brand publishes as "30 Ah" still gets a figure
+      // here instead of the panel silently dropping it.
+      const capacity = formatBatteryCapacity(specs);
+      return capacity ? { value: capacity, unit: "battery" } : null;
+    }
 
     case "topSpeedKmph":
       return specs.topSpeedKmph != null
