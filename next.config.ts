@@ -52,6 +52,31 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
+
+  /**
+   * The LXS 2.0 and LXS 3.0 were once two model pages. They are one model with
+   * three variants now, matching how Lectrix EV itself sells them, so their old
+   * URLs have to land somewhere rather than 404.
+   *
+   * Permanent (308), because the move is permanent: a 302 would leave the dead
+   * URLs in the index and split whatever authority they had between them. The
+   * `?variant=` is carried through so a shared link to the 3.0 still opens on
+   * the 3.0.
+   */
+  async redirects() {
+    return [
+      {
+        source: "/electric-scooters/lxs-2-0",
+        destination: "/electric-scooters/lxs?variant=lxs-2-0",
+        permanent: true,
+      },
+      {
+        source: "/electric-scooters/lxs-3-0",
+        destination: "/electric-scooters/lxs?variant=lxs-3-0",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

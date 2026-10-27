@@ -3,30 +3,53 @@ import type { Product } from "@/types/product";
 /**
  * SX25
  *
- * Copy is provisional and awaiting brand approval. Every specification, price,
- * colour, feature and warranty term below is `null` or empty until the
- * dealership supplies confirmed figures — see `_template.ts` for a fully
- * populated example, including how to express variant-level differences.
+ * SOURCE OF THE FIGURES BELOW
+ *
+ * Range, top speed and pack size from the comparison card Lectrix EV publishes
+ * on its homepage; price, charging rate, running cost and the two battery
+ * variants from the SX25 product page.
+ *
+ * ON THE TWO RANGE FIGURES
+ *
+ * The SX25 page carries both "75 KM certified range" and "60 Kms on one single
+ * charge", and the homepage comparison card gives the IDC range as 60 km. The
+ * two are not in conflict — they are different claims — so `claimedKm` holds
+ * the 60 km per-charge figure that the card and the page agree on, and the 75
+ * km certified figure is quoted in the FAQ in the brand's own words rather than
+ * being blended into the same field.
  */
 export const sx25: Product = {
   slug: "sx25",
   name: "SX25",
-  tagline: "Ride it the day you buy it.",
+  tagline: "The straightforward way to start riding electric.",
   description:
-    "A low-speed electric scooter positioned for riders who want to skip the licence and registration process and start riding straight away.",
+    "A no-licence 25 km/h city scooter aimed at short local runs — the least complicated, least expensive entry into the Lectrix EV range, in a lead-acid and a lithium-ion form.",
   category: "entry",
-  order: 5,
+  order: 4,
   featured: false,
 
-  // Baseline specification for the model. Variants override individual fields.
+  /**
+   * Baseline: what both variants share. Lectrix EV publishes a single set of
+   * SX25 figures and distinguishes the variants only by battery chemistry, so
+   * each variant declares its chemistry and nothing else.
+   */
   specs: {
-    batteryCapacityKwh: null,
+    batteryCapacityKwh: 1.5,
+    batteryCapacityLabel: null,
     batteryRemovable: null,
     batteryChemistry: null,
-    range: { claimedKm: null, realWorldKm: null },
-    topSpeedKmph: null,
+    range: { claimedKm: 60, realWorldKm: null },
+    topSpeedKmph: 25,
     accelerationSeconds: null,
-    charging: { fullChargeHours: null, eightyPercentHours: null, chargerType: null },
+    charging: {
+      // "4-5 hours of fast charging" on the supplied 3 A charger; the page also
+      // offers 3 hours with an 18 A fast charger, which is separate equipment
+      // and so is described in the FAQ rather than recorded as this scooter's
+      // charge time.
+      fullChargeHours: null,
+      eightyPercentHours: null,
+      chargerType: "3 A advanced charger",
+    },
     motor: { type: null, ratedPowerW: null, peakPowerW: null },
     gradeabilityPercent: null,
     gradeabilityDegrees: null,
@@ -36,38 +59,63 @@ export const sx25: Product = {
     ridingModes: [],
   },
 
-  // Add one entry per variant the showroom actually sells. A variant lists
-  // ONLY the specs that differ from the baseline above.
   variants: [
     {
-      id: "standard",
-      name: "Standard",
+      id: "sx25-lead-acid",
+      name: "Lead Acid Battery",
+      // ₹54,999 is shown in the variant panel with Lead Acid Battery selected,
+      // and matches the page's own "Starting From ₹54,999" — consistent with
+      // lead-acid being the cheaper of the two.
+      price: 54999,
+      availability: "available",
+      specs: { batteryChemistry: "Lead-acid" },
+      baas: null,
+      images: {
+        card: "/images/products/sx25-lead-acid-card.png",
+        hero: "/images/products/sx25-lead-acid-hero.png",
+        og: "/images/products/sx25-lead-acid-og.png",
+      },
+    },
+    {
+      id: "sx25-lithium-ion",
+      name: "Lithium Ion Battery",
+      // No separate price is published for the lithium variant.
       price: null,
       availability: "available",
-      specs: {},
+      specs: { batteryChemistry: "Lithium-ion" },
       baas: null,
+      images: {
+        card: "/images/products/sx25-lithium-ion-card.png",
+        hero: "/images/products/sx25-lithium-ion-hero.png",
+        og: "/images/products/sx25-lithium-ion-og.png",
+      },
     },
   ],
-  defaultVariantId: "standard",
+  defaultVariantId: "sx25-lead-acid",
 
-  // Connected features offered through the Lectrix EV app.
-  smartFeatures: [
-    "mobile-app",
-    "geo-fencing",
-    "navigation",
-    "anti-theft",
-    "sos",
-    "vehicle-monitoring",
-  ],
-  // Empty until the dealership confirms which features this model carries.
-  // Ids must exist in src/data/feature-catalog.ts.
+  // "Starting From ₹ 54,999 — Ex-Showroom Price (including charger)", printed
+  // on the SX25 page for the model as a whole.
+  publishedStartingPrice: 54999,
+
+  /**
+   * Only what the SX25 page itself shows against this model. The turn-by-turn
+   * navigation and speed-limit control mentioned in the page's testimonial
+   * carousel are shared boilerplate across several Lectrix EV product pages, so
+   * they are not claimed here until the dealership confirms them for the SX25.
+   */
+  smartFeatures: [],
   safetyFeatures: [],
-  comfortFeatures: [],
+  comfortFeatures: ["usb-charging"],
 
   colors: [],
-  // Placeholder artwork generated by `scripts/generate-placeholder-images.py`.
-  // Every file carries a visible PLACEHOLDER badge; swap in real photography
-  // at the same paths and sizes and nothing else needs to change.
+
+  /**
+   * Placeholder artwork generated by `scripts/generate-placeholder-images.py`.
+   * Every file carries a visible PLACEHOLDER badge. Each variant points at its
+   * own set so switching variant changes the visual; the model-level images
+   * below are the fallback. Swap real photography in at the same paths and
+   * sizes and nothing else needs to change.
+   */
   images: {
     card: "/images/products/sx25-card.png",
     hero: "/images/products/sx25-hero.png",
@@ -101,10 +149,46 @@ export const sx25: Product = {
   ],
   warranty: { vehicle: null, battery: null, notes: null },
 
-  faqs: [],
+  faqs: [
+    {
+      question: "What does the SX25 cost?",
+      answer:
+        "Lectrix EV advertises the SX25 from ₹54,999 ex-showroom including the charger, exclusive of insurance, road tax and registration. That is the lead-acid variant; the lithium-ion price is not published, so ask us for the current figure.",
+    },
+    {
+      question: "Lead acid or lithium ion — which should I take?",
+      answer:
+        "Lead-acid is cheaper to buy and is the ₹54,999 variant. Lithium-ion costs more, weighs considerably less and generally lasts through more charge cycles. If the scooter is doing a couple of short runs a day and price is the deciding factor, lead-acid does the job; if it is working harder than that, come and talk to us about lithium.",
+    },
+    {
+      question: "How far does the SX25 go on a charge?",
+      answer:
+        "Lectrix EV states 60 km on one single charge, and separately advertises a 75 km certified range. The 60 km figure is the one to plan your day around.",
+    },
+    {
+      question: "How long does it take to charge?",
+      answer:
+        "Lectrix EV quotes 4–5 hours on the supplied charger, and about 3 hours with an 18 A fast charger. We can tell you what the fast charger costs and whether it is worth it for your usage.",
+    },
+    {
+      question: "Do I need a licence to ride the SX25?",
+      answer:
+        "The SX25 tops out at 25 km/h, which puts it in the low-speed class that does not require a driving licence or registration in India. We will go through exactly what that means for you before you buy.",
+    },
+    {
+      question: "What does it cost to run?",
+      answer:
+        "Lectrix EV quotes ₹0.12 per kilometre. Put your own daily distance and electricity tariff into the savings calculator on this page and you will get a figure built on your numbers rather than an average.",
+    },
+  ],
   dataStatus: {
-    specsConfirmed: false,
-    pricingConfirmed: false,
+    // Everything Lectrix EV publishes for the SX25 is entered. Motor output,
+    // kerb weight, boot volume, ingress rating and warranty are unpublished.
+    specsConfirmed: true,
+    // The lead-acid price and the model's starting price are confirmed; the
+    // lithium variant is not separately priced.
+    pricingConfirmed: true,
+    // The page shows no proper equipment list, only marketing panels.
     featuresConfirmed: false,
     warrantyConfirmed: false,
     colorsConfirmed: false,

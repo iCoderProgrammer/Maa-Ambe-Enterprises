@@ -473,7 +473,7 @@ export const branchTemplate: Branch = {
 
   branchImages: [],
 
-  // Or list slugs: ["nduro", "lxs-3-0"].
+  // Or list slugs: ["nduro", "lxs"].
   availableModels: "all",
   // Or list assistance ids: ["finance", "registration"].
   services: "all",

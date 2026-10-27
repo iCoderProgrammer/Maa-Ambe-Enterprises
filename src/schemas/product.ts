@@ -42,6 +42,7 @@ const motorSchema = z.object({
 
 const specsShape = {
   batteryCapacityKwh: measurement,
+  batteryCapacityLabel: z.string().min(1).nullable(),
   batteryRemovable: z.boolean().nullable(),
   batteryChemistry: z.string().min(1).nullable(),
   range: rangeSchema,
@@ -70,6 +71,20 @@ const baasSchema = z.object({
   minimumTermMonths: measurement,
 });
 
+const imagesSchema = z.object({
+  card: z.string().min(1).nullable(),
+  hero: z.string().min(1).nullable(),
+  og: z.string().min(1).nullable(),
+});
+
+const galleryImageSchema = z.object({
+  src: z.string().min(1),
+  /** Empty alt text is an accessibility failure, so it is rejected here. */
+  alt: z.string().min(1, "Gallery images need descriptive alt text"),
+  width: z.number().int().positive(),
+  height: z.number().int().positive(),
+});
+
 const variantSchema = z.object({
   id: z
     .string()
@@ -81,6 +96,9 @@ const variantSchema = z.object({
   specs: variantSpecOverridesSchema,
   baas: baasSchema.nullable(),
   colorIds: z.array(z.string().min(1)).optional(),
+  /** Variant-specific artwork. Any slot may be omitted to inherit the model's. */
+  images: imagesSchema.partial().optional(),
+  gallery: z.array(galleryImageSchema).optional(),
 });
 
 const colorSchema = z.object({
@@ -93,14 +111,6 @@ const colorSchema = z.object({
 const warrantyTermSchema = z.object({
   years: measurement,
   kilometres: measurement,
-});
-
-const galleryImageSchema = z.object({
-  src: z.string().min(1),
-  /** Empty alt text is an accessibility failure, so it is rejected here. */
-  alt: z.string().min(1, "Gallery images need descriptive alt text"),
-  width: z.number().int().positive(),
-  height: z.number().int().positive(),
 });
 
 export const productSchema = z
@@ -119,17 +129,14 @@ export const productSchema = z
     specs: specsSchema,
     variants: z.array(variantSchema).min(1, "A model needs at least one variant"),
     defaultVariantId: z.string().min(1),
+    publishedStartingPrice: measurement,
 
     smartFeatures: z.array(featureIdSchema),
     safetyFeatures: z.array(featureIdSchema),
     comfortFeatures: z.array(featureIdSchema),
 
     colors: z.array(colorSchema),
-    images: z.object({
-      card: z.string().min(1).nullable(),
-      hero: z.string().min(1).nullable(),
-      og: z.string().min(1).nullable(),
-    }),
+    images: imagesSchema,
     gallery: z.array(galleryImageSchema),
     warranty: z.object({
       vehicle: warrantyTermSchema.nullable(),
@@ -184,6 +191,7 @@ export const productSchema = z
     // A model claiming confirmed pricing must actually carry a price.
     if (
       product.dataStatus.pricingConfirmed &&
+      product.publishedStartingPrice == null &&
       product.variants.every((variant) => variant.price == null)
     ) {
       ctx.addIssue({
@@ -191,6 +199,24 @@ export const productSchema = z
         path: ["dataStatus", "pricingConfirmed"],
         message: "Pricing is marked confirmed but no variant has a price",
       });
+    }
+
+    // A published starting price that is higher than a variant's own price
+    // would have the card advertise more than the cheapest thing on the floor.
+    // It always means one of the two figures is stale.
+    if (product.publishedStartingPrice != null) {
+      const cheapest = product.variants
+        .map((variant) => variant.price)
+        .filter((price): price is number => price != null)
+        .sort((a, b) => a - b)[0];
+
+      if (cheapest != null && cheapest < product.publishedStartingPrice) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["publishedStartingPrice"],
+          message: `publishedStartingPrice (${product.publishedStartingPrice}) is above the cheapest variant price (${cheapest})`,
+        });
+      }
     }
 
     // Likewise for images, so a stale flag cannot hide a missing asset.

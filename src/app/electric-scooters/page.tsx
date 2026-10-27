@@ -9,13 +9,13 @@ import { Breadcrumbs, type Crumb } from "@/components/common/breadcrumbs";
 import { Stagger, StaggerItem } from "@/components/common/motion";
 import { JsonLd } from "@/components/seo/json-ld";
 import { ProductCard } from "@/components/product/product-card";
-import { getProducts } from "@/lib/products";
+import { getModelNames, getProducts } from "@/lib/products";
 import { breadcrumbJsonLd, itemListJsonLd, localKeywords } from "@/lib/seo";
 import { siteConfig } from "@/config/site";
 import { DEALERSHIP_NAME } from "@/lib/brand";
 
 const title = "Lectrix EV Electric Scooters";
-const description = `Browse the complete Lectrix EV electric scooter lineup at ${DEALERSHIP_NAME} — NDuro, LXS 3.0, LXS 2.0, ZYRO and SX25. Compare range, battery and price, then book a free test ride.`;
+const description = `Browse the complete Lectrix EV electric scooter lineup at ${DEALERSHIP_NAME} — ${getModelNames()}. Compare range, battery and price, then book a free test ride.`;
 
 export const metadata: Metadata = {
   title,

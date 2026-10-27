@@ -9,7 +9,7 @@ import { nduroShowroom } from "./nduro";
  * renders the standard model page, unchanged — `getShowroom` returning
  * `undefined` is the normal case, not a missing-data problem.
  *
- * TO ADD LXS 3.0, LXS 2.0, ZYRO OR SX25
+ * TO ADD LXS, ZYRO OR SX25
  * Copy `nduro.ts`, point its blocks at that model's assets, and add it to the
  * list below. The page, the sticky navigation, the colour picker and every
  * block component are model-agnostic and need no change — figures come from

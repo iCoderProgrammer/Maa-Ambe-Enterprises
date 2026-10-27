@@ -13,7 +13,7 @@ import { FaqSection } from "@/components/sections/faq-section";
 import { EvSavingsCalculator } from "@/components/sections/ev-savings-calculator";
 import { ProductProvider } from "@/components/product/product-provider";
 import { ProductHero } from "@/components/product/product-hero";
-import { ProductGallery } from "@/components/product/product-gallery";
+import { VariantGallery } from "@/components/product/variant-gallery";
 import { ProductHighlights } from "@/components/product/product-highlights";
 import { FeatureGrid } from "@/components/product/feature-grid";
 import { ColorSwatches } from "@/components/product/color-swatches";
@@ -24,6 +24,7 @@ import { Showroom } from "@/components/product/showroom/showroom";
 import { ShowroomVariants } from "@/components/product/showroom/showroom-variants";
 import { ShowroomConversion } from "@/components/product/showroom/showroom-conversion";
 import {
+  formatBatteryCapacity,
   getProductBySlug,
   getProductFeatures,
   getProducts,
@@ -57,9 +58,9 @@ import { DEALERSHIP_NAME, brandedModel } from "@/lib/brand";
  * walk-through: sticky section navigation, image-led feature storytelling, an
  * interactive colour picker and a branch-aware conversion block. A model
  * without one gets the standard layout it always had. The switch is the
- * presence of a data file, so bringing LXS 3.0, LXS 2.0, ZYRO or SX25 into the
- * showroom experience is a content task, not a code change — and no model
- * loses its page while it waits for imagery.
+ * presence of a data file, so bringing LXS, ZYRO or SX25 into the showroom
+ * experience is a content task, not a code change — and no model loses its
+ * page while it waits for imagery.
  *
  * Both paths share the same hero, the same specification sheet, the same BaaS
  * terms and the same FAQ, because those are the parts a customer must be able
@@ -87,13 +88,14 @@ export async function generateMetadata({ params }: PageParams): Promise<Metadata
 
   if (!product) return { title: "Model not found" };
 
-  const { specs } = resolveVariant(product);
+  const { specs, images } = resolveVariant(product);
   const path = `/electric-scooters/${product.slug}`;
 
   // Only claim a figure in the description when it is actually confirmed.
+  const capacity = formatBatteryCapacity(specs);
   const facts = [
     specs.range.claimedKm != null ? `${specs.range.claimedKm} km claimed range` : null,
-    specs.batteryCapacityKwh != null ? `${specs.batteryCapacityKwh} kWh battery` : null,
+    capacity != null ? `${capacity} battery` : null,
   ].filter(Boolean);
 
   const branded = brandedModel(product.name);
@@ -102,7 +104,7 @@ export async function generateMetadata({ params }: PageParams): Promise<Metadata
     ? `${branded} electric scooter — ${facts.join(", ")}. ${product.description} Available at ${DEALERSHIP_NAME}, an authorized Lectrix EV dealership — book a test ride.`
     : `${product.description} See specifications, colours and features of the ${branded} at ${DEALERSHIP_NAME}, an authorized Lectrix EV dealership.`;
 
-  const image = product.images.og ?? product.images.hero;
+  const image = images.og ?? images.hero;
 
   return {
     title: `${branded} Electric Scooter`,
@@ -136,7 +138,7 @@ export default async function ModelPage({ params }: PageParams) {
   // Schema and metadata describe the default variant — the one a visitor sees
   // first. Client-side variant switching updates the page, not the crawlable
   // markup, which is the correct trade-off for a statically rendered page.
-  const { variant, specs } = resolveVariant(product);
+  const { variant, specs, images } = resolveVariant(product);
   const features = getProductFeatures(product);
   const related = getRelatedProducts(product.slug);
   const catalogue = getProducts();
@@ -159,7 +161,7 @@ export default async function ModelPage({ params }: PageParams) {
 
   return (
     <>
-      <JsonLd data={productJsonLd(product, variant, specs)} />
+      <JsonLd data={productJsonLd(product, variant, specs, images)} />
       <JsonLd data={breadcrumbJsonLd(crumbs)} />
       <JsonLd data={faqSchema(faqs)} />
 
@@ -216,7 +218,7 @@ export default async function ModelPage({ params }: PageParams) {
                 description={product.description}
               />
               <div className="mt-10">
-                <ProductGallery images={product.gallery} productName={product.name} />
+                <VariantGallery />
               </div>
             </Section>
 

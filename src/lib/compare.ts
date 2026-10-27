@@ -1,5 +1,9 @@
 import type { Product, ResolvedVariant } from "@/types/product";
-import { getProductFeatures, resolveVariant } from "@/lib/product-utils";
+import {
+  formatBatteryCapacity,
+  getProductFeatures,
+  resolveVariant,
+} from "@/lib/product-utils";
 import { formatPrice, formatSpec, TBD } from "@/lib/format";
 
 /**
@@ -138,8 +142,11 @@ const ROWS: RowDefinition[] = [
     label: "Battery capacity",
     group: "battery",
     better: "higher",
+    // Ranked on kWh only: ZYRO's pack is published as "30 Ah" or a bare
+    // voltage, which cannot be ordered against a kilowatt-hour figure. It still
+    // DISPLAYS its published value — it just never wins or loses the row.
     raw: (entry) => entry.specs.batteryCapacityKwh,
-    display: (entry) => formatSpec(entry.specs.batteryCapacityKwh, "kWh", 1),
+    display: (entry) => formatBatteryCapacity(entry.specs) ?? TBD,
   },
   {
     key: "battery-removable",

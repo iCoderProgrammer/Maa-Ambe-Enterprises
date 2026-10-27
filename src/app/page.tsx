@@ -16,6 +16,7 @@ import { FinalCta } from "@/components/sections/final-cta";
 import { homepageFaqs } from "@/data/faqs";
 import { dealership } from "@/data/dealership";
 import { hasMultipleBranches } from "@/lib/branches";
+import { getModelNames } from "@/lib/products";
 import { siteConfig } from "@/config/site";
 import {
   branchesSchema,
@@ -25,7 +26,7 @@ import {
 } from "@/lib/seo";
 
 const title = `${siteConfig.title} | ${dealership.dealershipName}`;
-const description = `Explore Lectrix EV electric scooters at ${dealership.dealershipName}, an authorized Lectrix EV dealership — NDuro, LXS 3.0, LXS 2.0, ZYRO and SX25. Compare range and price, estimate your savings, and book a free test ride.`;
+const description = `Explore Lectrix EV electric scooters at ${dealership.dealershipName}, an authorized Lectrix EV dealership — ${getModelNames()}. Compare range and price, estimate your savings, and book a free test ride.`;
 
 export const metadata: Metadata = {
   title: { absolute: title },

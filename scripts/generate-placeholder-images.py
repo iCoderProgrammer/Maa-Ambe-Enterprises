@@ -229,12 +229,51 @@ def save(img: Image.Image, *parts: str) -> None:
 
 
 # One accent per model so a grid of cards does not read as five copies.
+# (slug, display name, accent, gallery?) for the model-level artwork, each
+# followed by its variants. Mirrors `src/data/products/` — a variant here is a
+# variant there, and the file it produces is the path that variant points at.
+#
+# Variant accents are deliberately shifted from their model's rather than being
+# unrelated colours: they read as the same family on the lineup grid while still
+# changing visibly when the variant selector is used, which is what these stand
+# in for until real per-variant photography arrives.
+#
+# NDuro carries real photography and has no per-variant shots published, so it
+# appears here for its OG image only and its variants inherit the model's.
 MODELS = [
-    ("nduro", "Lectrix NDuro", (34, 168, 110)),
-    ("lxs-3-0", "Lectrix LXS 3.0", (36, 128, 190)),
-    ("lxs-2-0", "Lectrix LXS 2.0", (120, 96, 200)),
-    ("zyro", "Lectrix ZYRO", (206, 120, 46)),
-    ("sx25", "Lectrix SX25", (196, 74, 104)),
+    ("nduro", "Lectrix NDuro", (34, 168, 110), True, []),
+    (
+        "lxs",
+        "Lectrix LXS",
+        (36, 128, 190),
+        True,
+        [
+            ("lxs-2-0", "Lectrix LXS 2.0", (120, 96, 200), True),
+            ("lxs-3-0", "Lectrix LXS 3.0", (36, 128, 190), True),
+            ("lxs-baas", "Lectrix LXS BaaS", (58, 160, 205), True),
+        ],
+    ),
+    (
+        "zyro",
+        "Lectrix ZYRO",
+        (206, 120, 46),
+        True,
+        [
+            ("zyro-li", "Lectrix ZYRO LI", (206, 120, 46), False),
+            ("zyro-la-60v", "Lectrix ZYRO LA (60V)", (188, 142, 58), False),
+            ("zyro-la-48v", "Lectrix ZYRO LA (48V)", (170, 100, 40), False),
+        ],
+    ),
+    (
+        "sx25",
+        "Lectrix SX25",
+        (196, 74, 104),
+        True,
+        [
+            ("sx25-lead-acid", "Lectrix SX25 Lead Acid", (196, 74, 104), False),
+            ("sx25-lithium-ion", "Lectrix SX25 Lithium Ion", (168, 78, 140), False),
+        ],
+    ),
 ]
 
 GALLERY_VIEWS = ["Three-quarter front", "Side profile", "Rear three-quarter", "Console detail"]
@@ -256,31 +295,41 @@ BRANCH_VIEWS = [
 ]
 
 
+def product_set(slug: str, name: str, accent: tuple[int, int, int], gallery: bool) -> None:
+    """One model's or one variant's full set of stand-in artwork."""
+    for kind, (w, h), dark in (
+        ("card", (1200, 900), False),
+        ("hero", (1600, 1200), False),
+        ("og", (1200, 630), True),
+    ):
+        img = backdrop(w, h, accent, dark)
+        scooter(img, accent, dark)
+        label(
+            img,
+            name,
+            "Placeholder visual — replace with photography",
+            accent,
+            dark,
+            caption=kind != "card",
+        )
+        save(img, "products", f"{slug}-{kind}.png")
+
+    if not gallery:
+        return
+
+    for i, view in enumerate(GALLERY_VIEWS, start=1):
+        img = backdrop(1600, 1200, accent, i % 2 == 0)
+        scooter(img, accent, i % 2 == 0)
+        label(img, f"{name} — {view}", "Placeholder visual", accent, i % 2 == 0)
+        save(img, "products", f"{slug}-gallery-{i}.png")
+
+
 def main() -> None:
     print("products")
-    for slug, name, accent in MODELS:
-        for kind, (w, h), dark in (
-            ("card", (1200, 900), False),
-            ("hero", (1600, 1200), False),
-            ("og", (1200, 630), True),
-        ):
-            img = backdrop(w, h, accent, dark)
-            scooter(img, accent, dark)
-            label(
-                img,
-                name,
-                "Placeholder visual — replace with photography",
-                accent,
-                dark,
-                caption=kind != "card",
-            )
-            save(img, "products", f"{slug}-{kind}.png")
-
-        for i, view in enumerate(GALLERY_VIEWS, start=1):
-            img = backdrop(1600, 1200, accent, i % 2 == 0)
-            scooter(img, accent, i % 2 == 0)
-            label(img, f"{name} — {view}", "Placeholder visual", accent, i % 2 == 0)
-            save(img, "products", f"{slug}-gallery-{i}.png")
+    for slug, name, accent, gallery, variants in MODELS:
+        product_set(slug, name, accent, gallery)
+        for v_slug, v_name, v_accent, v_gallery in variants:
+            product_set(v_slug, v_name, v_accent, v_gallery)
 
     print("team")
     for slug, role, accent in TEAM:

@@ -4,6 +4,7 @@ import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 import { formatPrice, formatSpec, TBD } from "@/lib/format";
+import { formatBatteryCapacity } from "@/lib/product-utils";
 import { useProduct } from "@/components/product/product-provider";
 import type { ShowroomMedia } from "@/types/showroom";
 
@@ -26,7 +27,7 @@ export function ShowroomVariants({ image }: { image?: ShowroomMedia }) {
 
   const rows = [
     { label: "Claimed range", value: formatSpec(specs.range.claimedKm, "km") },
-    { label: "Battery capacity", value: formatSpec(specs.batteryCapacityKwh, "kWh", 1) },
+    { label: "Battery capacity", value: formatBatteryCapacity(specs) ?? TBD },
     { label: "Ex-showroom price", value: formatPrice(variant.price) },
     {
       label: "Battery as a subscription",

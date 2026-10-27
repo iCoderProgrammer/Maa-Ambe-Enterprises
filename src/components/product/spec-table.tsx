@@ -4,7 +4,7 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import { formatPrice, formatSpec, TBD } from "@/lib/format";
-import { formatGradeability } from "@/lib/product-utils";
+import { formatBatteryCapacity, formatGradeability } from "@/lib/product-utils";
 import { useProduct } from "@/components/product/product-provider";
 
 interface SpecRow {
@@ -64,7 +64,12 @@ export function SpecTable() {
     {
       title: "Battery & charging",
       rows: [
-        { label: "Battery capacity", value: formatSpec(specs.batteryCapacityKwh, "kWh", 1) },
+        {
+          label: "Battery capacity",
+          // kWh where Lectrix EV publishes kWh, the brand's own string ("30 Ah",
+          // "48V") where it does not. Never a conversion between the two.
+          value: formatBatteryCapacity(specs) ?? TBD,
+        },
         { label: "Chemistry", value: specs.batteryChemistry ?? TBD },
         {
           label: "Removable battery",

@@ -4,7 +4,7 @@ import { BatteryCharging, Gauge, PlugZap, Route } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { formatSpec, TBD } from "@/lib/format";
-import { formatGradeability } from "@/lib/product-utils";
+import { formatBatteryCapacity, formatGradeability } from "@/lib/product-utils";
 import { useProduct } from "@/components/product/product-provider";
 
 interface Highlight {
@@ -41,7 +41,7 @@ export function ProductHighlights() {
       title: "Battery",
       icon: BatteryCharging,
       lines: [
-        { label: "Capacity", value: formatSpec(specs.batteryCapacityKwh, "kWh", 1) },
+        { label: "Capacity", value: formatBatteryCapacity(specs) ?? TBD },
         { label: "Chemistry", value: specs.batteryChemistry ?? TBD },
         {
           label: "Removable",
